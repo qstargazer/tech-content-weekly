@@ -25,7 +25,7 @@ platform = "bilibili"
 id = "163682133"
 url = "https://space.bilibili.com/163682133"
 enabled = true
-# feed_url = "https://你的RSS服务/bilibili/user/video/163682133"
+feed_url = "https://rsshub.app/bilibili/user/video/163682133"
 
 [[creators]]
 name = "张小珺商业访谈录"
@@ -33,7 +33,7 @@ platform = "bilibili"
 id = "280780745"
 url = "https://space.bilibili.com/280780745"
 enabled = true
-# feed_url = "https://你的RSS服务/bilibili/user/video/280780745"
+feed_url = "https://rsshub.app/bilibili/user/video/280780745"
 
 [[creators]]
 name = "3Blue1Brown"
