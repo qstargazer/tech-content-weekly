@@ -31,6 +31,10 @@ class ReportTest(unittest.TestCase):
                 "这病说来话长",
                 "跨国串门儿计划",
                 "Huberman Lab",
+                "张小珺商业访谈录（小宇宙）",
+                "津津乐道",
+                "家庭教育圆桌谈",
+                "天才捕手FM",
             ],
         )
 

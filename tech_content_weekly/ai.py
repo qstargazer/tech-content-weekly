@@ -50,15 +50,6 @@ def generate_insight(items: list[ContentItem], config: AiConfig) -> tuple[str | 
     if not config.enabled:
         return None, None, None, []
     prompt, warnings = build_prompt(items), []
-    if os.getenv("OPENAI_API_KEY", "").strip():
-        try:
-            text = _openai(prompt, config.openai_model)
-            if not text:
-                raise RuntimeError("模型返回空内容")
-            return text, "OpenAI", config.openai_model, warnings
-        except Exception as error:
-            warnings.append(f"OpenAI 摘要失败: {_safe_error(error)}")
-            LOGGER.warning(warnings[-1])
     if os.getenv("DEEPSEEK_API_KEY", "").strip():
         try:
             text = _deepseek(prompt, config.deepseek_model)
@@ -66,7 +57,18 @@ def generate_insight(items: list[ContentItem], config: AiConfig) -> tuple[str | 
                 raise RuntimeError("模型返回空内容")
             return text, "DeepSeek", config.deepseek_model, warnings
         except Exception as error:
-            warnings.append(f"DeepSeek 摘要失败: {_safe_error(error)}")
-            LOGGER.warning(warnings[-1])
+            message = f"DeepSeek 摘要失败: {_safe_error(error)}"
+            warnings.append(message)
+            LOGGER.warning(message)
+    if os.getenv("OPENAI_API_KEY", "").strip():
+        try:
+            text = _openai(prompt, config.openai_model)
+            if not text:
+                raise RuntimeError("模型返回空内容")
+            return text, "OpenAI", config.openai_model, warnings
+        except Exception as error:
+            # OpenAI quota failures are expected here: keep them in Actions logs,
+            # but do not add them to the emailed/HTML report.
+            LOGGER.warning("OpenAI 摘要失败: %s", _safe_error(error))
     warnings.append("没有可用的 AI API Key，已保留基础数据报告")
     return None, None, None, warnings

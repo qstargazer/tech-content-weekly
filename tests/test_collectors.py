@@ -53,6 +53,19 @@ class CollectorTest(unittest.TestCase):
         collect_feed(creator, datetime(2026, 8, 1, tzinfo=timezone.utc))
         mock_get.assert_called_once_with("http://rsshub:1200/bilibili/user/video/1?key=secret")
 
+    @patch("tech_content_weekly.collectors.collect_feed")
+    def test_short_video_is_filtered_but_unknown_duration_is_kept(self, mock_feed):
+        creator = Creator("UP", "bilibili", "1", "https://space.bilibili.com/1", feed_url="https://feed")
+        base = datetime(2026, 8, 12, tzinfo=timezone.utc)
+        mock_feed.return_value = [
+            ContentItem("UP", "bilibili", "short", "https://short", base, 599),
+            ContentItem("UP", "bilibili", "long", "https://long", base, 600),
+            ContentItem("UP", "bilibili", "unknown", "https://unknown", base),
+        ]
+        with TemporaryDirectory() as raw:
+            rows, _ = collect_all((creator,), datetime(2026, 8, 1, tzinfo=timezone.utc), Path(raw), 600)
+        self.assertEqual([row.title for row in rows], ["long", "unknown"])
+
 
 if __name__ == "__main__":
     unittest.main()

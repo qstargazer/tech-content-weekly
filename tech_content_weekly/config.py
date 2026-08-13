@@ -34,10 +34,16 @@ class AiConfig:
 
 
 @dataclass(frozen=True)
+class FilterConfig:
+    min_video_duration_minutes: int
+
+
+@dataclass(frozen=True)
 class AppConfig:
     report: ReportConfig
     email: EmailConfig
     ai: AiConfig
+    filters: FilterConfig
     creators: tuple[Creator, ...]
 
 
@@ -57,6 +63,9 @@ def load_config(path: Path) -> AppConfig:
             enabled=raw["ai"]["enabled"],
             openai_model=os.getenv("OPENAI_MODEL", "").strip() or raw["ai"]["openai_model"],
             deepseek_model=os.getenv("DEEPSEEK_MODEL", "").strip() or raw["ai"]["deepseek_model"],
+        ),
+        filters=FilterConfig(
+            min_video_duration_minutes=int(raw.get("filters", {}).get("min_video_duration_minutes", 10)),
         ),
         creators=tuple(Creator(**item) for item in raw.get("creators", ())),
     )

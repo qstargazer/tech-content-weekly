@@ -8,7 +8,7 @@
 - 播客使用公开 RSS/Atom；Bilibili 使用 QNAP 自建 RSSHub，避免依赖容易出现 403 的第三方公共实例。
 - 展示本周新内容；视频按公开播放量统计最近 30 天 Top 3，播客按时间展示最近 3 期。
 - 每个创作者单独容错：失败时读取该创作者最近缓存并在报告中标注，不影响其他来源。
-- 可选 AI 导读：OpenAI 优先，调用失败或额度不足时自动回退 DeepSeek，页尾标注实际供应商和模型。
+- 可选 AI 导读：DeepSeek 优先，失败时回退 OpenAI；OpenAI 额度不足只写入 Actions 日志，不在周报中展示。
 - Gmail SMTP 支持多个收件人；GitHub Actions 每周三 07:00（Asia/Shanghai）运行，也可手动触发。
 
 ## 本地运行
@@ -41,6 +41,16 @@ tech-content-weekly --send
 
 - Bilibili：opus精译、张小珺商业访谈录
 - YouTube：3Blue1Brown、Dwarkesh Patel
+- 小宇宙：Huberman Lab、张小珺商业访谈录、津津乐道、家庭教育圆桌谈、天才捕手FM，以及已有的其他订阅
+
+YouTube / Bilibili 视频默认过滤低于 10 分钟的内容，可在 `config.toml` 中调整：
+
+```toml
+[filters]
+min_video_duration_minutes = 10
+```
+
+如果源站无法提供真实时长，则按未知时长保留，不会误删。
 
 YouTube 的 `id` 必须是 `UC` 开头的 channel ID：
 
@@ -73,7 +83,7 @@ name = "UP 主名称"
 platform = "bilibili"
 id = "主页 UID"
 url = "https://space.bilibili.com/UID"
-feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/UID"
+feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/UID?key=$RSSHUB_ACCESS_KEY"
 enabled = true
 ```
 
@@ -115,17 +125,18 @@ RSSHub 镜像版本应在升级前固定并保留旧镜像；Compose 文件中�
 | 变量 | 是否必需 | 用途 |
 |---|---:|---|
 | `YOUTUBE_API_KEY` | 使用 YouTube 时 | Google Cloud 中启用 YouTube Data API v3 后创建 |
-| `OPENAI_API_KEY` | AI 二选一 | 首选 AI 服务 |
-| `DEEPSEEK_API_KEY` | AI 二选一 | OpenAI 失败后的回退服务 |
+| `OPENAI_API_KEY` | AI 二选一 | DeepSeek 失败后的回退服务 |
+| `DEEPSEEK_API_KEY` | AI 二选一 | 首选 AI 服务 |
 | `OPENAI_MODEL` | 否 | 覆盖 `config.toml` 的 OpenAI 模型 |
 | `DEEPSEEK_MODEL` | 否 | 覆盖 `config.toml` 的 DeepSeek 模型 |
 | `SMTP_USER` | 发送邮件时 | Gmail 完整邮箱地址 |
 | `SMTP_PASSWORD` | 发送邮件时 | Gmail 两步验证生成的应用专用密码，不是登录密码 |
 | `SMTP_FROM` | 否 | 发件人，默认等于 `SMTP_USER` |
 | `EMAIL_RECIPIENTS` | 否 | 覆盖 TOML 收件人，多个地址用英文逗号分隔 |
-| `RSSHUB_BASE_URL` | Bilibili 必需 | QNAP 自建 RSSHub 地址，例如 `http://192.168.100.172:1200` |
+| `RSSHUB_BASE_URL` | RSSHub 来源必需 | QNAP 自建 RSSHub 地址，例如 `https://rsshub.example.com:10443` |
+| `RSSHUB_ACCESS_KEY` | RSSHub 必需 | RSSHub 访问密钥；只放在 GitHub Secrets / QNAP `.env` |
 
-默认模型为 `gpt-5-mini` 和 `deepseek-chat`。如果账号无权使用默认 OpenAI 模型，可通过 OpenAI 的 `GET /v1/models` 查看当前 API Key 可用模型后设置 `OPENAI_MODEL`；DeepSeek 同理可通过其模型列表接口或控制台确认。
+默认模型为 `deepseek-chat` 和 `gpt-5-mini`。如果 DeepSeek 不可用，程序才尝试 OpenAI；两个服务都不可用时保留基础数据报告。
 
 ## GitHub Actions 配置
 

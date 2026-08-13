@@ -17,6 +17,10 @@ enabled = true
 openai_model = "gpt-5-mini"
 deepseek_model = "deepseek-chat"
 
+[filters]
+# YouTube / Bilibili 视频低于此时长（分钟）时不进入周报；抓不到时长则保留。
+min_video_duration_minutes = 10
+
 # Bilibili 使用 QNAP 自建 RSSHub。RSSHUB_BASE_URL 通过 .env 或 Actions
 # 环境变量注入，例如 http://192.168.100.172:1200；不要将内网地址暴露到公网。
 # 未填写 feed_url 时，该来源会被跳过并写入数据状态，不影响整期。
@@ -87,5 +91,37 @@ name = "Huberman Lab"
 platform = "podcast"
 id = "huberman-lab"
 url = "https://www.xiaoyuzhoufm.com/podcast/60687c31879a138f3f870350"
-feed_url = "https://feeds.megaphone.fm/hubermanlab"
+enabled = true
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/60687c31879a138f3f870350?key=$RSSHUB_ACCESS_KEY"
+
+[[creators]]
+name = "张小珺商业访谈录（小宇宙）"
+platform = "podcast"
+id = "xiaoyuzhou-626b46ea9cbbf0451cf5a962"
+url = "https://www.xiaoyuzhoufm.com/podcast/626b46ea9cbbf0451cf5a962"
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/626b46ea9cbbf0451cf5a962?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+
+[[creators]]
+name = "津津乐道"
+platform = "podcast"
+id = "xiaoyuzhou-5e285480418a84a046275bf2"
+url = "https://www.xiaoyuzhoufm.com/podcast/5e285480418a84a046275bf2"
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/5e285480418a84a046275bf2?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+
+[[creators]]
+name = "家庭教育圆桌谈"
+platform = "podcast"
+id = "xiaoyuzhou-6304557d0fddb126907e1c26"
+url = "https://www.xiaoyuzhoufm.com/podcast/6304557d0fddb126907e1c26"
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/6304557d0fddb126907e1c26?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+
+[[creators]]
+name = "天才捕手FM"
+platform = "podcast"
+id = "xiaoyuzhou-5e77133b418a84a0469fc305"
+url = "https://www.xiaoyuzhoufm.com/podcast/5e77133b418a84a0469fc305"
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/5e77133b418a84a0469fc305?key=$RSSHUB_ACCESS_KEY"
 enabled = true

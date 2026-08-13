@@ -20,20 +20,26 @@ class AiAndMailerTest(unittest.TestCase):
         self.assertEqual(config.ai.deepseek_model, "deepseek-reasoner")
 
     @patch.dict(os.environ, {"OPENAI_API_KEY": "open-key", "DEEPSEEK_API_KEY": "deep-key"}, clear=True)
-    @patch("tech_content_weekly.ai._deepseek")
-    @patch("tech_content_weekly.ai._openai", return_value="OpenAI result")
-    def test_openai_is_preferred(self, openai, deepseek):
-        result = generate_insight([], AiConfig(True, "open-model", "deep-model"))
-        self.assertEqual(result[0:3], ("OpenAI result", "OpenAI", "open-model"))
-        deepseek.assert_not_called()
-
-    @patch.dict(os.environ, {"OPENAI_API_KEY": "open-key", "DEEPSEEK_API_KEY": "deep-key"}, clear=True)
+    @patch("tech_content_weekly.ai._openai")
     @patch("tech_content_weekly.ai._deepseek", return_value="DeepSeek result")
-    @patch("tech_content_weekly.ai._openai", side_effect=RuntimeError("quota exhausted"))
-    def test_deepseek_fallback(self, _openai, _deepseek):
+    def test_deepseek_is_preferred(self, deepseek, openai):
         result = generate_insight([], AiConfig(True, "open-model", "deep-model"))
         self.assertEqual(result[0:3], ("DeepSeek result", "DeepSeek", "deep-model"))
-        self.assertIn("OpenAI 摘要失败", result[3][0])
+        openai.assert_not_called()
+
+    @patch.dict(os.environ, {"OPENAI_API_KEY": "open-key", "DEEPSEEK_API_KEY": "deep-key"}, clear=True)
+    @patch("tech_content_weekly.ai._deepseek", side_effect=RuntimeError("deepseek down"))
+    @patch("tech_content_weekly.ai._openai", return_value="OpenAI result")
+    def test_openai_fallback(self, _openai, _deepseek):
+        result = generate_insight([], AiConfig(True, "open-model", "deep-model"))
+        self.assertEqual(result[0:3], ("OpenAI result", "OpenAI", "open-model"))
+        self.assertIn("DeepSeek 摘要失败", result[3][0])
+
+    @patch.dict(os.environ, {"OPENAI_API_KEY": "open-key"}, clear=True)
+    @patch("tech_content_weekly.ai._openai", side_effect=RuntimeError("quota exhausted"))
+    def test_openai_quota_failure_is_not_report_warning(self, _openai):
+        result = generate_insight([], AiConfig(True, "open-model", "deep-model"))
+        self.assertNotIn("OpenAI 摘要失败", "\n".join(result[3]))
 
     @patch.dict(os.environ, {"SMTP_USER": "sender@gmail.com", "SMTP_PASSWORD": "app-pass", "EMAIL_RECIPIENTS": "a@test.com, b@test.com"}, clear=True)
     @patch("tech_content_weekly.mailer.smtplib.SMTP_SSL")
