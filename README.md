@@ -96,6 +96,14 @@ http://QNAP_IP:1200/bilibili/user/video/163682133
 RSSHUB_BASE_URL=http://QNAP_IP:1200
 ```
 
+如果 Bilibili 路由返回 `412` 或 `-352 风控校验失败`，需要在 QNAP 的 RSSHub 目录创建 `.env`（可参考 `.env.example`），加入你自己 Bilibili 账号的完整浏览器 Cookie：
+
+```text
+BILIBILI_COOKIE_data1=这里填写完整 Cookie 字符串
+```
+
+Cookie 只保存在 QNAP，不要提交到 Git 或发送到聊天中。保存后执行 `docker compose up -d` 重新创建 RSSHub 容器，再访问上面的两个路由验证。RSSHub 的 Bilibili 配置文档说明了 `BILIBILI_COOKIE_*` 的用途和获取方式。
+
 RSSHub 镜像版本应在升级前固定并保留旧镜像；Compose 文件中的版本是经过部署时确认的日期标签，不建议直接改为 `latest`。
 
 播客 RSS 一般不提供统一播放量和评论数，因此报告不会把最新单集包装成热度排名。
