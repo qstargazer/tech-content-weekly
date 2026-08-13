@@ -114,8 +114,9 @@ def collect_feed(creator: Creator, since: datetime) -> list[ContentItem]:
     if not creator.feed_url:
         raise RuntimeError(f"{creator.platform} 创作者未配置 feed_url")
     feed_url = os.path.expandvars(creator.feed_url).strip()
-    if "$RSSHUB_BASE_URL" in feed_url:
-        raise RuntimeError("RSSHUB_BASE_URL 未配置")
+    for variable, label in (("$RSSHUB_BASE_URL", "RSSHUB_BASE_URL"), ("$RSSHUB_ACCESS_KEY", "RSSHUB_ACCESS_KEY")):
+        if variable in feed_url:
+            raise RuntimeError(f"{label} 未配置")
     return [item for item in _rss_items(creator, _get(feed_url)) if item.published >= since]
 
 

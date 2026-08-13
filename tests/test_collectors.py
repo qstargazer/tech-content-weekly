@@ -44,14 +44,14 @@ class CollectorTest(unittest.TestCase):
         self.assertEqual(rows[0].title, "Cached")
         self.assertTrue(any("已使用最近缓存" in row for row in warnings))
 
-    @patch.dict(os.environ, {"RSSHUB_BASE_URL": "http://rsshub:1200"}, clear=False)
+    @patch.dict(os.environ, {"RSSHUB_BASE_URL": "http://rsshub:1200", "RSSHUB_ACCESS_KEY": "secret"}, clear=False)
     @patch("tech_content_weekly.collectors._get")
     def test_rsshub_base_url_is_expanded(self, mock_get):
         mock_get.return_value = b'''<rss><channel><item><title>Video</title><link>https://bilibili.com/video/1</link>
         <pubDate>Thu, 13 Aug 2026 08:00:00 GMT</pubDate></item></channel></rss>'''
-        creator = Creator("UP", "bilibili", "1", "https://space.bilibili.com/1", feed_url="$RSSHUB_BASE_URL/bilibili/user/video/1")
+        creator = Creator("UP", "bilibili", "1", "https://space.bilibili.com/1", feed_url="$RSSHUB_BASE_URL/bilibili/user/video/1?key=$RSSHUB_ACCESS_KEY")
         collect_feed(creator, datetime(2026, 8, 1, tzinfo=timezone.utc))
-        mock_get.assert_called_once_with("http://rsshub:1200/bilibili/user/video/1")
+        mock_get.assert_called_once_with("http://rsshub:1200/bilibili/user/video/1?key=secret")
 
 
 if __name__ == "__main__":

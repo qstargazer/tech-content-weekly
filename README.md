@@ -143,6 +143,7 @@ Variables（普通配置）：
 
 - `EMAIL_RECIPIENTS`，例如 `stargazerq@foxmail.com,871517518@qq.com`
 - `RSSHUB_BASE_URL`，QNAP RSSHub 地址，例如 `http://192.168.100.172:1200`；仅适用于能访问 QNAP 内网的 self-hosted runner
+- `RSSHUB_ACCESS_KEY`（Secret），RSSHub 的访问密钥；公网 RSSHub 必须配置
 - `SMTP_FROM`（可选）
 - `OPENAI_MODEL`（可选）
 - `DEEPSEEK_MODEL`（可选）
