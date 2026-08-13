@@ -56,3 +56,35 @@ id = "xiaoyuzhou-65a5fb7540d4ef949c0140ac"
 url = "https://www.xiaoyuzhoufm.com/podcast/65a5fb7540d4ef949c0140ac"
 feed_url = "https://www.ximalaya.com/album/80074602.xml"
 enabled = true
+
+[[creators]]
+name = "知行小酒馆"
+platform = "podcast"
+id = "xiaoyuzhou-6013f9f58e2f7ee375cf4216"
+url = "https://www.xiaoyuzhoufm.com/podcast/6013f9f58e2f7ee375cf4216"
+feed_url = "https://feed.xyzfm.space/j8yp8gxkmgqr"
+enabled = true
+
+[[creators]]
+name = "这病说来话长"
+platform = "podcast"
+id = "xiaoyuzhou-63995a333a2b7eba5ceb4658"
+url = "https://www.xiaoyuzhoufm.com/podcast/63995a333a2b7eba5ceb4658"
+feed_url = "https://feed.xyzfm.space/xgeuu9mx3jag"
+enabled = true
+
+[[creators]]
+name = "跨国串门儿计划"
+platform = "podcast"
+id = "xiaoyuzhou-670f3da40d2f24f28978736f"
+url = "https://www.xiaoyuzhoufm.com/podcast/670f3da40d2f24f28978736f"
+feed_url = "https://feed.xyzfm.space/r8t44lmvu99m"
+enabled = true
+
+[[creators]]
+name = "Huberman Lab"
+platform = "podcast"
+id = "huberman-lab"
+url = "https://www.hubermanlab.com/podcast"
+feed_url = "https://feeds.megaphone.fm/hubermanlab"
+enabled = true

@@ -27,6 +27,10 @@ class ReportTest(unittest.TestCase):
                 "3Blue1Brown",
                 "Dwarkesh Patel",
                 "自习室 STUDY ROOM",
+                "知行小酒馆",
+                "这病说来话长",
+                "跨国串门儿计划",
+                "Huberman Lab",
             ],
         )
 
