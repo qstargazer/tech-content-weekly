@@ -1,0 +1,59 @@
+name: weekly-content-report
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      sample:
+        description: "使用内置样例数据（不访问平台）"
+        type: boolean
+        default: false
+      send_email:
+        description: "生成后发送邮件"
+        type: boolean
+        default: true
+  schedule:
+    # Tuesday 23:00 UTC = Wednesday 07:00 Asia/Shanghai.
+    - cron: "0 23 * * 2"
+
+jobs:
+  test-and-report:
+    runs-on: ubuntu-latest
+    env:
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+      SMTP_USER: ${{ secrets.SMTP_USER }}
+      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      SMTP_FROM: ${{ vars.SMTP_FROM }}
+      EMAIL_RECIPIENTS: ${{ vars.EMAIL_RECIPIENTS }}
+      OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+      DEEPSEEK_MODEL: ${{ vars.DEEPSEEK_MODEL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -e .
+      - run: python -m unittest discover -s tests -v
+      - name: Generate sample for code checks
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        run: tech-content-weekly --sample
+      - name: Generate and send scheduled report
+        if: github.event_name == 'schedule'
+        run: tech-content-weekly --send
+      - name: Generate manually
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          args=()
+          if [[ "${{ inputs.sample }}" == "true" ]]; then args+=(--sample); fi
+          if [[ "${{ inputs.send_email }}" == "true" ]]; then args+=(--send); fi
+          tech-content-weekly "${args[@]}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tech-content-weekly-${{ github.run_number }}
+          path: output/
+          if-no-files-found: error
+          retention-days: 30
