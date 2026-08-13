@@ -37,6 +37,11 @@ tech-content-weekly --send
 
 编辑 `config.toml`，复制一个 `[[creators]]` 区块即可扩展列表。
 
+默认列表当前包含：
+
+- Bilibili：opus精译、张小珺商业访谈录
+- YouTube：3Blue1Brown、Dwarkesh Patel
+
 YouTube 的 `id` 必须是 `UC` 开头的 channel ID：
 
 ```toml

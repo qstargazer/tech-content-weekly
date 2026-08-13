@@ -18,20 +18,20 @@ class ReportTest(unittest.TestCase):
         self.config = load_config(ROOT / "config.toml")
         self.items = build_sample_items(self.now)
 
-    def test_config_is_extensible_across_three_platforms(self):
+    def test_config_contains_requested_creators(self):
         self.assertEqual(
-            [creator.platform for creator in self.config.creators],
-            ["bilibili", "youtube", "podcast"],
+            [creator.name for creator in self.config.creators],
+            ["opus精译", "张小珺商业访谈录", "3Blue1Brown", "Dwarkesh Patel"],
         )
 
     def test_weekly_filter_and_monthly_top(self):
         weekly = weekly_items(self.items, self.now, 7)
-        self.assertEqual(len(weekly), 4)
+        self.assertEqual(len(weekly), 5)
         top = monthly_top(self.items, self.now, 30, 3)
-        self.assertEqual(len(top["影视飓风"]), 3)
+        self.assertEqual(len(top["opus精译"]), 3)
         self.assertGreaterEqual(
-            top["影视飓风"][0].view_count,
-            top["影视飓风"][1].view_count,
+            top["opus精译"][0].view_count,
+            top["opus精译"][1].view_count,
         )
 
     def test_html_contains_metrics_podcast_caveat_and_wide_layout(self):
@@ -47,7 +47,7 @@ class ReportTest(unittest.TestCase):
         self.assertIn("播客 / 小宇宙本周更新", result)
         self.assertIn("播放 128.6 万", result)
         self.assertIn("评论 4,832", result)
-        self.assertIn("不代表热度排名", result)
+        self.assertIn("播客公开 RSS 通常没有统一播放和评论指标", result)
         self.assertIn("@media(max-width:600px)", result)
 
     def test_ai_markdown_markers_render_as_html(self):
@@ -69,7 +69,8 @@ class ReportTest(unittest.TestCase):
         self.assertIn("本期内容导读由 OpenAI 模型 `gpt-5-mini` 生成", result)
 
     def test_shanghai_timezone_fallback_is_available(self):
-        self.assertEqual(_timezone("Asia/Shanghai").utcoffset(None).total_seconds(), 8 * 3600)
+        shanghai_time = datetime(2026, 8, 13, 12, tzinfo=_timezone("Asia/Shanghai"))
+        self.assertEqual(shanghai_time.utcoffset().total_seconds(), 8 * 3600)
 
     def test_action_runs_wednesday_0700_shanghai(self):
         workflow = (ROOT / ".github/workflows/weekly.yml").read_text(encoding="utf-8")
