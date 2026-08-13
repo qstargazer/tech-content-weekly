@@ -85,6 +85,6 @@ enabled = true
 name = "Huberman Lab"
 platform = "podcast"
 id = "huberman-lab"
-url = "https://www.hubermanlab.com/podcast"
+url = "https://www.xiaoyuzhoufm.com/podcast/60687c31879a138f3f870350"
 feed_url = "https://feeds.megaphone.fm/hubermanlab"
 enabled = true
