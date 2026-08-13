@@ -48,3 +48,11 @@ platform = "youtube"
 id = "UCXl4i9dYBrFOabk0xGmbkRA"
 url = "https://www.youtube.com/@dwarkeshpatel"
 enabled = true
+
+[[creators]]
+name = "自习室 STUDY ROOM"
+platform = "podcast"
+id = "xiaoyuzhou-65a5fb7540d4ef949c0140ac"
+url = "https://www.xiaoyuzhoufm.com/podcast/65a5fb7540d4ef949c0140ac"
+feed_url = "https://www.ximalaya.com/album/80074602.xml"
+enabled = true

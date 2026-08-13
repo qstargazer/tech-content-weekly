@@ -21,7 +21,13 @@ class ReportTest(unittest.TestCase):
     def test_config_contains_requested_creators(self):
         self.assertEqual(
             [creator.name for creator in self.config.creators],
-            ["opus精译", "张小珺商业访谈录", "3Blue1Brown", "Dwarkesh Patel"],
+            [
+                "opus精译",
+                "张小珺商业访谈录",
+                "3Blue1Brown",
+                "Dwarkesh Patel",
+                "自习室 STUDY ROOM",
+            ],
         )
 
     def test_weekly_filter_and_monthly_top(self):
