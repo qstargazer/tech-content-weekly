@@ -5,7 +5,7 @@
 ## v0.2 能力
 
 - YouTube 使用官方 Data API v3，采集上传时间、时长、播放量和评论数。
-- 播客及 Bilibili 使用用户配置的公开 RSS/Atom；不硬编码不稳定的非公开接口或 Cookie。
+- 播客使用公开 RSS/Atom；Bilibili 使用 QNAP 自建 RSSHub，避免依赖容易出现 403 的第三方公共实例。
 - 展示本周新内容；视频按公开播放量统计最近 30 天 Top 3，播客按时间展示最近 3 期。
 - 每个创作者单独容错：失败时读取该创作者最近缓存并在报告中标注，不影响其他来源。
 - 可选 AI 导读：OpenAI 优先，调用失败或额度不足时自动回退 DeepSeek，页尾标注实际供应商和模型。
@@ -65,7 +65,7 @@ feed_url = "https://节目公开RSS地址"
 enabled = true
 ```
 
-Bilibili 目前使用你确认可访问的 RSS/Atom 地址，例如自建 RSSHub。项目不内置第三方公共 RSSHub 实例，以免服务失效：
+Bilibili 默认读取 `RSSHUB_BASE_URL` 指向的自建 RSSHub。配置文件中的 `$RSSHUB_BASE_URL` 会在运行时展开：
 
 ```toml
 [[creators]]
@@ -73,9 +73,30 @@ name = "UP 主名称"
 platform = "bilibili"
 id = "主页 UID"
 url = "https://space.bilibili.com/UID"
-feed_url = "https://你的RSS服务/bilibili/user/video/UID"
+feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/UID"
 enabled = true
 ```
+
+GitHub 托管的 runner 无法访问 QNAP 内网地址。推荐在 QNAP 上安装 GitHub Actions self-hosted runner，让周报和 RSSHub 在同一内网运行；或者给 RSSHub 配置受认证保护的 HTTPS 公网入口。不要直接将 `1200` 端口暴露到公网。
+
+### QNAP 上部署 RSSHub
+
+仓库提供 `deploy/rsshub/docker-compose.yml`。先将该目录复制到 QNAP 的持久化目录（例如 `/share/CACHEDEV1_DATA/docker/rsshub`），再在 QNAP Container Station 的 Compose 项目中启动。服务只绑定 QNAP 的 LAN 地址和端口 `1200`，包含 Redis 缓存和 Chromium 支持。
+
+启动后先在局域网验证：
+
+```text
+http://QNAP_IP:1200/healthz
+http://QNAP_IP:1200/bilibili/user/video/163682133
+```
+
+然后在周报运行环境中设置：
+
+```text
+RSSHUB_BASE_URL=http://QNAP_IP:1200
+```
+
+RSSHub 镜像版本应在升级前固定并保留旧镜像；Compose 文件中的版本是经过部署时确认的日期标签，不建议直接改为 `latest`。
 
 播客 RSS 一般不提供统一播放量和评论数，因此报告不会把最新单集包装成热度排名。
 
@@ -94,6 +115,7 @@ enabled = true
 | `SMTP_PASSWORD` | 发送邮件时 | Gmail 两步验证生成的应用专用密码，不是登录密码 |
 | `SMTP_FROM` | 否 | 发件人，默认等于 `SMTP_USER` |
 | `EMAIL_RECIPIENTS` | 否 | 覆盖 TOML 收件人，多个地址用英文逗号分隔 |
+| `RSSHUB_BASE_URL` | Bilibili 必需 | QNAP 自建 RSSHub 地址，例如 `http://192.168.100.172:1200` |
 
 默认模型为 `gpt-5-mini` 和 `deepseek-chat`。如果账号无权使用默认 OpenAI 模型，可通过 OpenAI 的 `GET /v1/models` 查看当前 API Key 可用模型后设置 `OPENAI_MODEL`；DeepSeek 同理可通过其模型列表接口或控制台确认。
 
@@ -126,5 +148,5 @@ python -m unittest discover -s tests -v
 
 - 公开播放量和评论数是报告生成时快照，不代表历史时点值。
 - YouTube API 有每日配额；当前每个频道最多读取最近 50 条上传记录。
-- Bilibili 的稳定公开数据渠道有限，因此 v0.2 要求用户配置 RSS，并以缓存保证单源失败不拖垮整期。
+- Bilibili 的公开接口容易出现 403；当前通过 QNAP 自建 RSSHub 获取，并以缓存保证单源失败不拖垮整期。
 - 报告中的 AI 导读只依据采集到的标题、简介和指标，不等同于完整观看/收听后的内容总结。

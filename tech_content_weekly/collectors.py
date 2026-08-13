@@ -113,7 +113,10 @@ def _rss_items(creator: Creator, data: bytes) -> list[ContentItem]:
 def collect_feed(creator: Creator, since: datetime) -> list[ContentItem]:
     if not creator.feed_url:
         raise RuntimeError(f"{creator.platform} 创作者未配置 feed_url")
-    return [item for item in _rss_items(creator, _get(creator.feed_url)) if item.published >= since]
+    feed_url = os.path.expandvars(creator.feed_url).strip()
+    if "$RSSHUB_BASE_URL" in feed_url:
+        raise RuntimeError("RSSHUB_BASE_URL 未配置")
+    return [item for item in _rss_items(creator, _get(feed_url)) if item.published >= since]
 
 
 def _cache_path(cache_dir: Path, creator: Creator) -> Path:

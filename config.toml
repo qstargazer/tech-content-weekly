@@ -17,7 +17,8 @@ enabled = true
 openai_model = "gpt-5-mini"
 deepseek_model = "deepseek-chat"
 
-# Bilibili 使用用户确认可用的 RSS/Atom 地址（例如自建 RSSHub）。
+# Bilibili 使用 QNAP 自建 RSSHub。RSSHUB_BASE_URL 通过 .env 或 Actions
+# 环境变量注入，例如 http://192.168.100.172:1200；不要将内网地址暴露到公网。
 # 未填写 feed_url 时，该来源会被跳过并写入数据状态，不影响整期。
 [[creators]]
 name = "opus精译"
@@ -25,7 +26,7 @@ platform = "bilibili"
 id = "163682133"
 url = "https://space.bilibili.com/163682133"
 enabled = true
-feed_url = "https://rsshub.app/bilibili/user/video/163682133"
+feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/163682133"
 
 [[creators]]
 name = "张小珺商业访谈录"
@@ -33,7 +34,7 @@ platform = "bilibili"
 id = "280780745"
 url = "https://space.bilibili.com/280780745"
 enabled = true
-feed_url = "https://rsshub.app/bilibili/user/video/280780745"
+feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/280780745"
 
 [[creators]]
 name = "3Blue1Brown"
