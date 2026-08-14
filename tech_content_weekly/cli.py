@@ -41,10 +41,18 @@ def run(config_path: Path, output_dir: Path, sample: bool, send: bool = False) -
     now = datetime.now(_timezone(config.report.timezone))
     if sample:
         items, warnings = build_sample_items(now), []
+        min_seconds = config.filters.min_video_duration_minutes * 60
+        items = [
+            item for item in items
+            if item.platform not in {"youtube", "bilibili"}
+            or item.duration_seconds is None
+            or item.duration_seconds >= min_seconds
+        ]
     else:
         since = now.astimezone(timezone.utc) - timedelta(days=config.report.monthly_days)
         items, warnings = collect_all(
-            config.creators, since, config_path.resolve().parent / "data/cache"
+            config.creators, since, config_path.resolve().parent / "data/cache",
+            config.filters.min_video_duration_minutes * 60,
         )
         if not items:
             raise RuntimeError("所有在线来源均无可用内容或缓存")

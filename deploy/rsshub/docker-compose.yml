@@ -1,0 +1,36 @@
+services:
+  rsshub:
+    # RSSHub supports date tags; verify the chosen tag before upgrading.
+    image: diygod/rsshub:chromium-bundled-de93618f1838df9c8bcf09cf21d237499f0444d2
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "192.168.100.172:1200:1200"
+    environment:
+      NODE_ENV: production
+      CACHE_TYPE: redis
+      REDIS_URL: redis://redis:6379/
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:1200/healthz?key=$$ACCESS_KEY"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  redis-data:

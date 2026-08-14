@@ -33,6 +33,20 @@ def _iso_duration(value: str) -> int | None:
     return days * 86400 + hours * 3600 + minutes * 60 + seconds
 
 
+def _clock_duration(value: str) -> int | None:
+    parts = [part.strip() for part in (value or "").split(":")]
+    if not parts or not all(part.isdigit() for part in parts):
+        return None
+    numbers = [int(part) for part in parts]
+    if len(numbers) == 3:
+        return numbers[0] * 3600 + numbers[1] * 60 + numbers[2]
+    if len(numbers) == 2:
+        return numbers[0] * 60 + numbers[1]
+    if len(numbers) == 1:
+        return numbers[0]
+    return None
+
+
 def collect_youtube(creator: Creator, since: datetime) -> list[ContentItem]:
     key = os.getenv("YOUTUBE_API_KEY", "").strip()
     if not key:
@@ -79,6 +93,24 @@ def _text(node: ET.Element, *names: str) -> str:
     return ""
 
 
+def _rss_duration(node: ET.Element) -> int | None:
+    value = _text(
+        node,
+        "{http://www.itunes.com/dtds/podcast-1.0.dtd}duration",
+        "duration",
+        "{http://search.yahoo.com/mrss/}duration",
+    )
+    if value:
+        return _clock_duration(value)
+    for child in node.iter():
+        raw = child.attrib.get("duration", "")
+        if raw:
+            parsed = _clock_duration(raw)
+            if parsed is not None:
+                return parsed
+    return None
+
+
 def _parse_date(value: str) -> datetime:
     from email.utils import parsedate_to_datetime
     try:
@@ -98,12 +130,10 @@ def _rss_items(creator: Creator, data: bytes) -> list[ContentItem]:
             link = next((item.get("href", "") for item in node.findall("a:link", ns) if item.get("rel", "alternate") == "alternate"), "")
             result.append(ContentItem(creator.name, creator.platform, _text(node, "{http://www.w3.org/2005/Atom}title"), link,
                                       _parse_date(_text(node, "{http://www.w3.org/2005/Atom}published", "{http://www.w3.org/2005/Atom}updated")),
-                                      description=_text(node, "{http://www.w3.org/2005/Atom}summary")))
+                                      _rss_duration(node), description=_text(node, "{http://www.w3.org/2005/Atom}summary")))
     else:
         for node in root.findall(".//item"):
-            duration = _text(node, "{http://www.itunes.com/dtds/podcast-1.0.dtd}duration")
-            parts = [int(part) for part in duration.split(":") if part.isdigit()]
-            seconds = (parts[0] * 3600 + parts[1] * 60 + parts[2]) if len(parts) == 3 else (parts[0] * 60 + parts[1] if len(parts) == 2 else None)
+            seconds = _rss_duration(node)
             result.append(ContentItem(creator.name, creator.platform, _text(node, "title"), _text(node, "link"),
                                       _parse_date(_text(node, "pubDate", "{http://purl.org/dc/elements/1.1/}date")),
                                       seconds, description=re.sub(r"<[^>]+>", " ", _text(node, "description"))[:240]))
@@ -113,7 +143,11 @@ def _rss_items(creator: Creator, data: bytes) -> list[ContentItem]:
 def collect_feed(creator: Creator, since: datetime) -> list[ContentItem]:
     if not creator.feed_url:
         raise RuntimeError(f"{creator.platform} 创作者未配置 feed_url")
-    return [item for item in _rss_items(creator, _get(creator.feed_url)) if item.published >= since]
+    feed_url = os.path.expandvars(creator.feed_url).strip()
+    for variable, label in (("$RSSHUB_BASE_URL", "RSSHUB_BASE_URL"), ("$RSSHUB_ACCESS_KEY", "RSSHUB_ACCESS_KEY")):
+        if variable in feed_url:
+            raise RuntimeError(f"{label} 未配置")
+    return [item for item in _rss_items(creator, _get(feed_url)) if item.published >= since]
 
 
 def _cache_path(cache_dir: Path, creator: Creator) -> Path:
@@ -121,7 +155,10 @@ def _cache_path(cache_dir: Path, creator: Creator) -> Path:
     return cache_dir / f"{creator.platform}-{safe_id}.json"
 
 
-def collect_all(creators: tuple[Creator, ...], since: datetime, cache_dir: Path) -> tuple[list[ContentItem], list[str]]:
+def collect_all(
+    creators: tuple[Creator, ...], since: datetime, cache_dir: Path,
+    min_video_duration_seconds: int = 600,
+) -> tuple[list[ContentItem], list[str]]:
     cache_dir.mkdir(parents=True, exist_ok=True)
     items, warnings = [], []
     for creator in creators:
@@ -130,6 +167,8 @@ def collect_all(creators: tuple[Creator, ...], since: datetime, cache_dir: Path)
         cache = _cache_path(cache_dir, creator)
         try:
             fresh = collect_youtube(creator, since) if creator.platform == "youtube" else collect_feed(creator, since)
+            if creator.platform in {"youtube", "bilibili"}:
+                fresh = [item for item in fresh if item.duration_seconds is None or item.duration_seconds >= min_video_duration_seconds]
             cache.write_text(json.dumps([item.as_json() for item in fresh], ensure_ascii=False, indent=2), encoding="utf-8")
             items.extend(fresh)
         except Exception as error:
@@ -140,6 +179,9 @@ def collect_all(creators: tuple[Creator, ...], since: datetime, cache_dir: Path)
             warnings.append(f"{creator.name} ({creator.platform}): {type(error).__name__}: {message}")
             if cache.exists():
                 cached = [ContentItem.from_json(row) for row in json.loads(cache.read_text(encoding="utf-8"))]
-                items.extend(item for item in cached if item.published >= since)
+                cached_items = [item for item in cached if item.published >= since]
+                if creator.platform in {"youtube", "bilibili"}:
+                    cached_items = [item for item in cached_items if item.duration_seconds is None or item.duration_seconds >= min_video_duration_seconds]
+                items.extend(cached_items)
                 warnings.append(f"{creator.name}: 已使用最近缓存")
     return items, warnings
