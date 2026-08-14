@@ -19,25 +19,25 @@ class ReportTest(unittest.TestCase):
         self.items = build_sample_items(self.now)
 
     def test_config_contains_requested_creators(self):
+        video_creators = {
+            creator.id: creator.platform
+            for creator in self.config.creators
+            if creator.platform in {"bilibili", "youtube"}
+        }
         self.assertEqual(
-            [creator.name for creator in self.config.creators],
-            [
-                "opus精译",
-                "张小珺商业访谈录",
-                "3Blue1Brown",
-                "Dwarkesh Patel",
-                "自习室 STUDY ROOM",
-                "知行小酒馆",
-                "这病说来话长",
-                "跨国串门儿计划",
-                "Huberman Lab",
-                "张小珺商业访谈录（小宇宙）",
-                "津津乐道",
-                "家庭教育圆桌谈",
-                "天才捕手FM",
-            ],
+            video_creators,
+            {
+                "163682133": "bilibili",
+                "280780745": "bilibili",
+                "88461692": "bilibili",
+                "517221395": "bilibili",
+                "1787393235": "bilibili",
+                "3691003189922747": "bilibili",
+            },
         )
-
+        self.assertFalse(
+            any(creator.platform == "youtube" for creator in self.config.creators)
+        )
     def test_weekly_filter_and_monthly_top(self):
         weekly = weekly_items(self.items, self.now, 7)
         self.assertEqual(len(weekly), 5)

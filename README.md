@@ -39,8 +39,8 @@ tech-content-weekly --send
 
 默认列表当前包含：
 
-- Bilibili：opus精译、张小珺商业访谈录
-- YouTube：3Blue1Brown、Dwarkesh Patel
+- Bilibili: 6 configured accounts (see config.toml)
+- YouTube: no enabled accounts; config.toml keeps one commented reference block
 - 小宇宙：Huberman Lab、张小珺商业访谈录、津津乐道、家庭教育圆桌谈、天才捕手FM，以及已有的其他订阅
 
 YouTube / Bilibili 视频默认过滤低于 10 分钟的内容，可在 `config.toml` 中调整：

@@ -1,5 +1,5 @@
 [report]
-title = "科技内容 Weekly Report"
+title = "科技内容周报"
 timezone = "Asia/Shanghai"
 lookback_days = 7
 monthly_days = 30
@@ -42,17 +42,44 @@ feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/280780745?key=$RSSHUB_ACCESS_KE
 
 [[creators]]
 name = "3Blue1Brown"
-platform = "youtube"
-id = "UCYO_jab_esuFRV4b17AJtAw"
-url = "https://www.youtube.com/@3blue1brown"
+platform = "bilibili"
+id = "88461692"
+url = "https://space.bilibili.com/88461692"
 enabled = true
+feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/88461692?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
-name = "Dwarkesh Patel"
-platform = "youtube"
-id = "UCXl4i9dYBrFOabk0xGmbkRA"
-url = "https://www.youtube.com/@dwarkeshpatel"
+name = "ZOMI"
+platform = "bilibili"
+id = "517221395"
+url = "https://space.bilibili.com/517221395"
 enabled = true
+feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/517221395?key=$RSSHUB_ACCESS_KEY"
+
+[[creators]]
+name = "常青藤名校课"
+platform = "bilibili"
+id = "1787393235"
+url = "https://space.bilibili.com/1787393235"
+enabled = true
+feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/1787393235?key=$RSSHUB_ACCESS_KEY"
+
+[[creators]]
+name = "DwarkeshPatel"
+platform = "bilibili"
+id = "3691003189922747"
+url = "https://space.bilibili.com/3691003189922747"
+enabled = true
+feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/3691003189922747?key=$RSSHUB_ACCESS_KEY"
+
+# YouTube reference (disabled because every line is commented out).
+# Remove the leading "# " from all lines below to enable it.
+# [[creators]]
+# name = "3Blue1Brown YouTube"
+# platform = "youtube"
+# id = "UCYO_jab_esuFRV4b17AJtAw"
+# url = "https://www.youtube.com/@3blue1brown"
+# enabled = true
 
 [[creators]]
 name = "自习室 STUDY ROOM"
