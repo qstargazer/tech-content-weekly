@@ -52,17 +52,18 @@ class ReportTest(unittest.TestCase):
         result = render_html(
             self.config.report.title, self.config.creators, self.items, self.now
         )
-        self.assertIn("max-width:1080px", result)
+        self.assertIn("max-width:1160px", result)
         self.assertIn("linear-gradient(135deg,#0b3d2e,#176b4d)", result)
         self.assertIn("border-bottom:2px solid #197552", result)
         self.assertNotIn("#1772f6", result)
+        self.assertIn("<table>", result)
+        self.assertIn("<details id=\"bilibili\" class=\"detail\">", result)
         self.assertIn("哔哩哔哩本周更新", result)
         self.assertIn("YouTube本周更新", result)
         self.assertIn("播客 / 小宇宙本周更新", result)
-        self.assertIn("播放 128.6 万", result)
-        self.assertIn("评论 4,832", result)
+        self.assertIn("18:48 / 128.6 万 / 4,832", result)
         self.assertIn("播客公开 RSS 通常没有统一播放和评论指标", result)
-        self.assertIn("@media(max-width:600px)", result)
+        self.assertIn("@media(max-width:700px)", result)
 
     def test_ai_markdown_markers_render_as_html(self):
         result = render_html(
