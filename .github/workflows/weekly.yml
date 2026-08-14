@@ -14,7 +14,7 @@ on:
         type: boolean
         default: true
   schedule:
-    # Tuesday 23:00 UTC = Wednesday 07:00 Asia/Shanghai.
+    # Tuesday 23:15 UTC = Wednesday 07:15 Asia/Shanghai.
     - cron: "15 23 * * 2"
 
 jobs:

@@ -87,10 +87,10 @@ class ReportTest(unittest.TestCase):
         shanghai_time = datetime(2026, 8, 13, 12, tzinfo=_timezone("Asia/Shanghai"))
         self.assertEqual(shanghai_time.utcoffset().total_seconds(), 8 * 3600)
 
-    def test_action_runs_wednesday_0700_shanghai(self):
+    def test_action_runs_wednesday_0715_shanghai(self):
         workflow = (ROOT / ".github/workflows/weekly.yml").read_text(encoding="utf-8")
-        self.assertIn('cron: "0 23 * * 2"', workflow)
-        self.assertIn("Wednesday 07:00 Asia/Shanghai", workflow)
+        self.assertIn('cron: "15 23 * * 2"', workflow)
+        self.assertIn("Wednesday 07:15 Asia/Shanghai", workflow)
 
 
 if __name__ == "__main__":
