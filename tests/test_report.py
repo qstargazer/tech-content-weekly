@@ -5,6 +5,7 @@ import unittest
 from tech_content_weekly.analytics import monthly_top, weekly_items
 from tech_content_weekly.cli import _timezone
 from tech_content_weekly.config import load_config
+from tech_content_weekly.models import CATEGORY_COMMUTE, CATEGORY_DEEP, Recommendation
 from tech_content_weekly.report import render_html, render_markdown
 from tech_content_weekly.sample_data import build_sample_items
 
@@ -33,11 +34,13 @@ class ReportTest(unittest.TestCase):
                 "517221395": "bilibili",
                 "1787393235": "bilibili",
                 "3691003189922747": "bilibili",
+                "UCYO_jab_esuFRV4b17AJtAw": "youtube",
             },
         )
-        self.assertFalse(
-            any(creator.platform == "youtube" for creator in self.config.creators)
-        )
+        bilibili = next(c for c in self.config.creators if c.id == "88461692")
+        self.assertEqual(bilibili.name, "3Blue1Brown（B站官方）")
+        youtube = next(c for c in self.config.creators if c.id == "UCYO_jab_esuFRV4b17AJtAw")
+        self.assertEqual(youtube.name, "3Blue1Brown（YouTube）")
     def test_weekly_filter_and_monthly_top(self):
         weekly = weekly_items(self.items, self.now, 7)
         self.assertEqual(len(weekly), 5)
@@ -87,10 +90,41 @@ class ReportTest(unittest.TestCase):
         shanghai_time = datetime(2026, 8, 13, 12, tzinfo=_timezone("Asia/Shanghai"))
         self.assertEqual(shanghai_time.utcoffset().total_seconds(), 8 * 3600)
 
-    def test_action_runs_wednesday_0715_shanghai(self):
+    def test_action_runs_monday_and_wednesday_0630_shanghai(self):
         workflow = (ROOT / ".github/workflows/weekly.yml").read_text(encoding="utf-8")
-        self.assertIn('cron: "15 23 * * 2"', workflow)
-        self.assertIn("Wednesday 07:15 Asia/Shanghai", workflow)
+        self.assertIn('cron: "30 22 * * 0,2"', workflow)
+        self.assertIn("Monday & Wednesday 06:30 Asia/Shanghai", workflow)
+
+    def test_html_renders_recommendation_sections(self):
+        weekly = weekly_items(self.items, self.now, 7)
+        recommendations = [
+            Recommendation(item, CATEGORY_COMMUTE, "通勤时收听即可。") for item in weekly[:2]
+        ] + [Recommendation(item, CATEGORY_DEEP, "内容较深，需要专注。") for item in weekly[2:4]]
+        top_pick = Recommendation(weekly[2], "top", "本周最值得投入。")
+        result = render_html(
+            self.config.report.title, self.config.creators, self.items, self.now,
+            recommendations=recommendations, top_pick=top_pick,
+            rec_provider="DeepSeek", rec_model="deepseek-chat",
+        )
+        self.assertIn("本周推荐", result)
+        self.assertIn("本周最值得投入", result)
+        self.assertIn("通勤 / 碎片时间", result)
+        self.assertIn("需要专门时间深入研究", result)
+        self.assertIn("通勤时收听即可。", result)
+        self.assertIn("内容较深，需要专注。", result)
+        self.assertIn("场景分类由 DeepSeek 模型", result)
+
+    def test_markdown_renders_recommendations(self):
+        weekly = weekly_items(self.items, self.now, 7)
+        recommendations = [Recommendation(weekly[0], CATEGORY_COMMUTE, "适合通勤。")]
+        result = render_markdown(
+            self.config.report.title, self.config.creators, self.items, self.now,
+            recommendations=recommendations, rec_provider="OpenAI", rec_model="gpt-5-mini",
+        )
+        self.assertIn("## 本周推荐", result)
+        self.assertIn("### 通勤 / 碎片时间", result)
+        self.assertIn("适合通勤。", result)
+        self.assertIn("场景分类由 OpenAI 模型 `gpt-5-mini` 生成", result)
 
 
 if __name__ == "__main__":

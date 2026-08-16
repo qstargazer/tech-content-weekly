@@ -14,12 +14,13 @@ on:
         type: boolean
         default: true
   schedule:
-    # Tuesday 23:15 UTC = Wednesday 07:15 Asia/Shanghai.
-    - cron: "15 23 * * 2"
+    # Sunday & Tuesday 22:30 UTC = Monday & Wednesday 06:30 Asia/Shanghai.
+    - cron: "30 22 * * 0,2"
 
 jobs:
   test-and-report:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     env:
       YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from .config import load_config
 from .collectors import collect_all
 from .analytics import weekly_items
-from .ai import generate_insight
+from .ai import generate_insight, generate_recommendations, heuristic_recommendations
 from .mailer import send_email
 from .report import render_html, render_markdown
 from .sample_data import build_sample_items
@@ -59,20 +59,28 @@ def run(config_path: Path, output_dir: Path, sample: bool, send: bool = False) -
     if sample:
         insight = "### 本周优先内容\n- **视觉计算**：关注高帧率制作流程。\n- **数学可视化**：适合系统理解抽象概念。\n- `AI 编译器`访谈：补充工程实践视角。"
         provider, model, ai_warnings = "离线样例", "preview-model", []
+        recommendations, top_pick = heuristic_recommendations(weekly_items(items, now, config.report.lookback_days))
+        rec_provider, rec_model = None, None
     else:
         insight, provider, model, ai_warnings = generate_insight(
             weekly_items(items, now, config.report.lookback_days), config.ai
         )
+        recommendations, top_pick, rec_provider, rec_model, rec_warnings = generate_recommendations(
+            weekly_items(items, now, config.report.lookback_days), config.ai
+        )
+        ai_warnings.extend(rec_warnings)
     warnings.extend(ai_warnings)
     output_dir.mkdir(parents=True, exist_ok=True)
     markdown = render_markdown(
         config.report.title, config.creators, items, now,
         insight, provider, model, warnings,
+        recommendations, top_pick, rec_provider, rec_model,
     )
     page = render_html(
         config.report.title, config.creators, items, now,
         config.report.lookback_days, config.report.monthly_days, config.report.monthly_top_n,
         insight, provider, model, warnings,
+        recommendations, top_pick, rec_provider, rec_model,
     )
     stem = now.date().isoformat()
     md_path = output_dir / f"weekly-{stem}.md"
