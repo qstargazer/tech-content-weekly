@@ -144,17 +144,25 @@ feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/5e285480418a84a046275bf2?key=$RS
 enabled = true
 
 [[creators]]
-name = "家庭教育圆桌谈"
-platform = "podcast"
-id = "xiaoyuzhou-6304557d0fddb126907e1c26"
-url = "https://www.xiaoyuzhoufm.com/podcast/6304557d0fddb126907e1c26"
-feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/6304557d0fddb126907e1c26?key=$RSSHUB_ACCESS_KEY"
-enabled = true
-
-[[creators]]
 name = "天才捕手FM"
 platform = "podcast"
 id = "xiaoyuzhou-5e77133b418a84a0469fc305"
 url = "https://www.xiaoyuzhoufm.com/podcast/5e77133b418a84a0469fc305"
 feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/5e77133b418a84a0469fc305?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+
+[[creators]]
+name = "无人知晓"
+platform = "podcast"
+id = "xiaoyuzhou-611719d3cb0b82e1df0ad29e"
+url = "https://www.xiaoyuzhoufm.com/podcast/611719d3cb0b82e1df0ad29e"
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/611719d3cb0b82e1df0ad29e?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+
+[[creators]]
+name = "面基"
+platform = "podcast"
+id = "xiaoyuzhou-6388760f22567e8ea6ad070f"
+url = "https://www.xiaoyuzhoufm.com/podcast/6388760f22567e8ea6ad070f"
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/6388760f22567e8ea6ad070f?key=$RSSHUB_ACCESS_KEY"
 enabled = true

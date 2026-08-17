@@ -14,8 +14,8 @@ on:
         type: boolean
         default: true
   schedule:
-    # Sunday & Tuesday 22:30 UTC = Monday & Wednesday 06:30 Asia/Shanghai.
-    - cron: "30 22 * * 0,2"
+    # Tuesday/Thursday/Saturday 21:43 UTC = Wednesday/Friday/Sunday 05:43 Asia/Shanghai.
+    - cron: "43 21 * * 2,4,6"
 
 jobs:
   test-and-report:
