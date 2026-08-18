@@ -104,6 +104,45 @@ class ReportTest(unittest.TestCase):
         )
         self.assertIn("评分 9.1", markdown)
 
+    def test_html_renders_full_douban_ranking_section(self):
+        books = [
+            ContentItem(
+                "豆瓣热门图书 · 非虚构", "douban", f"图书{i}",
+                f"https://book.douban.com/subject/{i}/",
+                self.now - timedelta(days=2), None, None, None,
+                f"作者{i}/出版社/2026-{i}.0分",
+            )
+            for i in range(1, 6)
+        ]
+        result = render_html(
+            self.config.report.title, self.config.creators, self.items + books, self.now
+        )
+        self.assertIn("豆瓣读书榜单", result)
+        self.assertIn("完整榜单", result)
+        self.assertIn("豆瓣热门图书 · 非虚构", result)
+        self.assertIn("<span>评分 5.0</span>", result)
+        markdown = render_markdown(
+            self.config.report.title, self.config.creators, self.items + books, self.now
+        )
+        self.assertIn("## 豆瓣读书榜单", markdown)
+
+    def test_collect_feed_douban_falls_back_to_full_ranking_when_filtered_empty(self):
+        import os
+        from tech_content_weekly.collectors import collect_feed
+        creator = next(c for c in self.config.creators if c.platform == "douban")
+        feed = (
+            '<rss><channel><lastBuildDate>Mon, 10 Aug 2026 00:00:00 GMT</lastBuildDate>'
+            '<item><title>旧书</title><link>https://book.douban.com/subject/1</link>'
+            '<description>旧书/作者/9.0分</description></item>'
+            '<item><title>新书</title><link>https://book.douban.com/subject/2</link>'
+            '<description>新书/作者/8.0分</description></item>'
+            '</channel></rss>'
+        ).encode("utf-8")
+        with unittest.mock.patch("tech_content_weekly.collectors._get", return_value=feed), \
+             unittest.mock.patch.dict(os.environ, {"RSSHUB_BASE_URL": "http://rsshub:1200", "RSSHUB_ACCESS_KEY": "k"}, clear=False):
+            rows = collect_feed(creator, self.now - timedelta(days=7))
+        self.assertGreaterEqual(len(rows), 1)
+
     def test_shanghai_timezone_fallback_is_available(self):
         shanghai_time = datetime(2026, 8, 13, 12, tzinfo=_timezone("Asia/Shanghai"))
         self.assertEqual(shanghai_time.utcoffset().total_seconds(), 8 * 3600)

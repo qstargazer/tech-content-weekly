@@ -199,7 +199,11 @@ def collect_feed(creator: Creator, since: datetime) -> list[ContentItem]:
     for variable, label in (("$RSSHUB_BASE_URL", "RSSHUB_BASE_URL"), ("$RSSHUB_ACCESS_KEY", "RSSHUB_ACCESS_KEY")):
         if variable in feed_url:
             raise RuntimeError(f"{label} 未配置")
-    return [item for item in _rss_items(creator, _get(feed_url)) if item.published >= since]
+    items = _rss_items(creator, _get(feed_url))
+    if creator.platform == "douban":
+        filtered = [item for item in items if item.published >= since]
+        return filtered if filtered else items
+    return [item for item in items if item.published >= since]
 
 
 def _cache_path(cache_dir: Path, creator: Creator) -> Path:
@@ -215,6 +219,11 @@ def _collect_one(
         fresh = collect_youtube(creator, since) if creator.platform == "youtube" else collect_feed(creator, since)
         if creator.platform in {"youtube", "bilibili"}:
             fresh = [item for item in fresh if item.duration_seconds is None or item.duration_seconds >= min_video_duration_seconds]
+        if creator.platform == "douban" and not fresh and cache.exists():
+            cached = [ContentItem.from_json(row) for row in json.loads(cache.read_text(encoding="utf-8"))]
+            if cached:
+                warnings = [f"{creator.name}: 榜单拉取为空，已使用最近缓存"]
+                return cached, warnings
         cache.write_text(json.dumps([item.as_json() for item in fresh], ensure_ascii=False, indent=2), encoding="utf-8")
         return fresh, []
     except Exception as error:
