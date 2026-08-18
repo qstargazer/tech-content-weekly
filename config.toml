@@ -80,6 +80,13 @@ url = "https://www.youtube.com/@3blue1brown"
 enabled = true
 
 [[creators]]
+name = "小岛浪吹"
+platform = "youtube"
+id = "UCYPT3wl0MgbOz63ho166KOw"
+url = "https://www.youtube.com/@xiaodaodalang"
+enabled = true
+
+[[creators]]
 name = "自习室 STUDY ROOM"
 platform = "podcast"
 id = "xiaoyuzhou-65a5fb7540d4ef949c0140ac"
