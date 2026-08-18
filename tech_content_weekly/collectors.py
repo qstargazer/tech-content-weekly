@@ -3,9 +3,12 @@ from __future__ import annotations
 import json
 import os
 import re
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -14,11 +17,25 @@ from .models import ContentItem, Creator
 
 USER_AGENT = "tech-content-weekly/0.3 (+personal weekly report)"
 
+_RETRIABLE_CODES = {429, 500, 502, 503, 504}
+
 
 def _get(url: str) -> bytes:
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(request, timeout=25) as response:
-        return response.read()
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(request, timeout=25) as response:
+                return response.read()
+        except urllib.error.HTTPError as error:
+            if error.code not in _RETRIABLE_CODES:
+                raise
+            if attempt == 2:
+                raise
+        except (urllib.error.URLError, TimeoutError, OSError):
+            if attempt == 2:
+                raise
+        time.sleep(2 ** attempt)
+    raise RuntimeError("unreachable")
 
 
 def _json(url: str) -> dict:
@@ -57,21 +74,33 @@ def collect_youtube(creator: Creator, since: datetime) -> list[ContentItem]:
     if not rows:
         raise RuntimeError(f"YouTube channel 未找到: {creator.id}")
     uploads = rows[0]["contentDetails"]["relatedPlaylists"]["uploads"]
-    query = urllib.parse.urlencode({"part": "snippet,contentDetails", "playlistId": uploads, "maxResults": 50, "key": key})
-    playlist = _json(f"https://www.googleapis.com/youtube/v3/playlistItems?{query}")
     candidates = []
-    for row in playlist.get("items", []):
-        published = datetime.fromisoformat(row["contentDetails"]["videoPublishedAt"].replace("Z", "+00:00"))
-        if published >= since:
-            candidates.append((row["contentDetails"]["videoId"], row["snippet"], published))
+    page_token = ""
+    while True:
+        params = {"part": "snippet,contentDetails", "playlistId": uploads, "maxResults": 50, "key": key}
+        if page_token:
+            params["pageToken"] = page_token
+        playlist = _json(f"https://www.googleapis.com/youtube/v3/playlistItems?{urllib.parse.urlencode(params)}")
+        page_candidates = []
+        for row in playlist.get("items", []):
+            published = datetime.fromisoformat(row["contentDetails"]["videoPublishedAt"].replace("Z", "+00:00"))
+            if published >= since:
+                page_candidates.append((row["contentDetails"]["videoId"], row["snippet"], published))
+        candidates.extend(page_candidates)
+        next_token = playlist.get("nextPageToken")
+        if not next_token or not page_candidates:
+            break
+        page_token = next_token
     if not candidates:
         return []
-    query = urllib.parse.urlencode({"part": "contentDetails,statistics,snippet", "id": ",".join(row[0] for row in candidates), "key": key})
-    details = _json(f"https://www.googleapis.com/youtube/v3/videos?{query}")
-    by_id = {row["id"]: row for row in details.get("items", [])}
+    details = {}
+    for start in range(0, len(candidates), 50):
+        chunk = candidates[start:start + 50]
+        query = urllib.parse.urlencode({"part": "contentDetails,statistics,snippet", "id": ",".join(row[0] for row in chunk), "key": key})
+        details.update({row["id"]: row for row in _json(f"https://www.googleapis.com/youtube/v3/videos?{query}").get("items", [])})
     result = []
     for video_id, snippet, published in candidates:
-        row = by_id.get(video_id, {})
+        row = details.get(video_id, {})
         stats = row.get("statistics", {})
         detail_snippet = row.get("snippet", snippet)
         result.append(ContentItem(
@@ -178,33 +207,48 @@ def _cache_path(cache_dir: Path, creator: Creator) -> Path:
     return cache_dir / f"{creator.platform}-{safe_id}.json"
 
 
+def _collect_one(
+    creator: Creator, since: datetime, cache_dir: Path, min_video_duration_seconds: int
+) -> tuple[list[ContentItem], list[str]]:
+    cache = _cache_path(cache_dir, creator)
+    try:
+        fresh = collect_youtube(creator, since) if creator.platform == "youtube" else collect_feed(creator, since)
+        if creator.platform in {"youtube", "bilibili"}:
+            fresh = [item for item in fresh if item.duration_seconds is None or item.duration_seconds >= min_video_duration_seconds]
+        cache.write_text(json.dumps([item.as_json() for item in fresh], ensure_ascii=False, indent=2), encoding="utf-8")
+        return fresh, []
+    except Exception as error:
+        message = str(error)
+        key = os.getenv("YOUTUBE_API_KEY", "").strip()
+        if key:
+            message = message.replace(key, "***")
+        warnings = [f"{creator.name} ({creator.platform}): {type(error).__name__}: {message}"]
+        fallback = []
+        if cache.exists():
+            cached = [ContentItem.from_json(row) for row in json.loads(cache.read_text(encoding="utf-8"))]
+            fallback = [item for item in cached if item.published >= since]
+            if creator.platform in {"youtube", "bilibili"}:
+                fallback = [item for item in fallback if item.duration_seconds is None or item.duration_seconds >= min_video_duration_seconds]
+            warnings.append(f"{creator.name}: 已使用最近缓存")
+        return fallback, warnings
+
+
 def collect_all(
     creators: tuple[Creator, ...], since: datetime, cache_dir: Path,
     min_video_duration_seconds: int = 600,
 ) -> tuple[list[ContentItem], list[str]]:
     cache_dir.mkdir(parents=True, exist_ok=True)
+    enabled = [creator for creator in creators if creator.enabled]
+    if not enabled:
+        return [], []
     items, warnings = [], []
-    for creator in creators:
-        if not creator.enabled:
-            continue
-        cache = _cache_path(cache_dir, creator)
-        try:
-            fresh = collect_youtube(creator, since) if creator.platform == "youtube" else collect_feed(creator, since)
-            if creator.platform in {"youtube", "bilibili"}:
-                fresh = [item for item in fresh if item.duration_seconds is None or item.duration_seconds >= min_video_duration_seconds]
-            cache.write_text(json.dumps([item.as_json() for item in fresh], ensure_ascii=False, indent=2), encoding="utf-8")
+    with ThreadPoolExecutor(max_workers=min(8, len(enabled))) as executor:
+        futures = [
+            executor.submit(_collect_one, creator, since, cache_dir, min_video_duration_seconds)
+            for creator in enabled
+        ]
+        for future in futures:
+            fresh, creator_warnings = future.result()
             items.extend(fresh)
-        except Exception as error:
-            message = str(error)
-            key = os.getenv("YOUTUBE_API_KEY", "").strip()
-            if key:
-                message = message.replace(key, "***")
-            warnings.append(f"{creator.name} ({creator.platform}): {type(error).__name__}: {message}")
-            if cache.exists():
-                cached = [ContentItem.from_json(row) for row in json.loads(cache.read_text(encoding="utf-8"))]
-                cached_items = [item for item in cached if item.published >= since]
-                if creator.platform in {"youtube", "bilibili"}:
-                    cached_items = [item for item in cached_items if item.duration_seconds is None or item.duration_seconds >= min_video_duration_seconds]
-                items.extend(cached_items)
-                warnings.append(f"{creator.name}: 已使用最近缓存")
+            warnings.extend(creator_warnings)
     return items, warnings

@@ -41,7 +41,7 @@ enabled = true
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/280780745?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
-name = "3Blue1Brown"
+name = "3Blue1Brown（B站官方）"
 platform = "bilibili"
 id = "88461692"
 url = "https://space.bilibili.com/88461692"
@@ -72,14 +72,12 @@ url = "https://space.bilibili.com/3691003189922747"
 enabled = true
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/3691003189922747?key=$RSSHUB_ACCESS_KEY"
 
-# YouTube reference (disabled because every line is commented out).
-# Remove the leading "# " from all lines below to enable it.
-# [[creators]]
-# name = "3Blue1Brown YouTube"
-# platform = "youtube"
-# id = "UCYO_jab_esuFRV4b17AJtAw"
-# url = "https://www.youtube.com/@3blue1brown"
-# enabled = true
+[[creators]]
+name = "3Blue1Brown（YouTube）"
+platform = "youtube"
+id = "UCYO_jab_esuFRV4b17AJtAw"
+url = "https://www.youtube.com/@3blue1brown"
+enabled = true
 
 [[creators]]
 name = "自习室 STUDY ROOM"
@@ -87,6 +85,14 @@ platform = "podcast"
 id = "xiaoyuzhou-65a5fb7540d4ef949c0140ac"
 url = "https://www.xiaoyuzhoufm.com/podcast/65a5fb7540d4ef949c0140ac"
 feed_url = "https://www.ximalaya.com/album/80074602.xml"
+enabled = true
+
+[[creators]]
+name = "沈奕斐的播客"
+platform = "podcast"
+id = "xiaoyuzhou-5f4e170c9504bbdb77566a19"
+url = "https://www.xiaoyuzhoufm.com/podcast/5f4e170c9504bbdb77566a19"
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/5f4e170c9504bbdb77566a19?key=$RSSHUB_ACCESS_KEY"
 enabled = true
 
 [[creators]]
@@ -138,19 +144,27 @@ feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/5e285480418a84a046275bf2?key=$RS
 enabled = true
 
 [[creators]]
-name = "家庭教育圆桌谈"
-platform = "podcast"
-id = "xiaoyuzhou-6304557d0fddb126907e1c26"
-url = "https://www.xiaoyuzhoufm.com/podcast/6304557d0fddb126907e1c26"
-feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/6304557d0fddb126907e1c26?key=$RSSHUB_ACCESS_KEY"
-enabled = true
-
-[[creators]]
 name = "天才捕手FM"
 platform = "podcast"
 id = "xiaoyuzhou-5e77133b418a84a0469fc305"
 url = "https://www.xiaoyuzhoufm.com/podcast/5e77133b418a84a0469fc305"
 feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/5e77133b418a84a0469fc305?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+
+[[creators]]
+name = "无人知晓"
+platform = "podcast"
+id = "xiaoyuzhou-611719d3cb0b82e1df0ad29e"
+url = "https://www.xiaoyuzhoufm.com/podcast/611719d3cb0b82e1df0ad29e"
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/611719d3cb0b82e1df0ad29e?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+
+[[creators]]
+name = "面基"
+platform = "podcast"
+id = "xiaoyuzhou-6388760f22567e8ea6ad070f"
+url = "https://www.xiaoyuzhoufm.com/podcast/6388760f22567e8ea6ad070f"
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/6388760f22567e8ea6ad070f?key=$RSSHUB_ACCESS_KEY"
 enabled = true
 
 # 豆瓣读书：热门榜单每周一更新；新书速递随平台更新。均通过自建 RSSHub 拉取。

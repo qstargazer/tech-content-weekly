@@ -53,3 +53,15 @@ class ContentItem:
             comment_count=int(value["comment_count"]) if value.get("comment_count") is not None else None,
             description=str(value.get("description", "")),
         )
+
+
+CATEGORY_COMMUTE = "commute"
+CATEGORY_DEEP = "deep"
+RECOMMENDATION_CATEGORIES = (CATEGORY_COMMUTE, CATEGORY_DEEP)
+
+
+@dataclass(frozen=True)
+class Recommendation:
+    item: ContentItem
+    category: str
+    reason: str

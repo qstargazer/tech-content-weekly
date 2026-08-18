@@ -10,6 +10,7 @@
 - 展示本周新内容；视频按公开播放量统计最近 30 天 Top 3，播客按时间展示最近 3 期。
 - 每个创作者单独容错：失败时读取该创作者最近缓存并在报告中标注，不影响其他来源。
 - 可选 AI 导读：DeepSeek 优先，失败时回退 OpenAI；OpenAI 额度不足只写入 Actions 日志，不在周报中展示。
+- 场景分类推荐：将本周内容分为「通勤 / 碎片时间」与「需要专门时间深入研究」两类并给出理由，附本周最值得投入的一条。AI 可用时由模型分类，否则使用内置规则兜底。
 - Gmail SMTP 支持多个收件人；GitHub Actions 每周二、周五 05:00（Asia/Shanghai）运行，也可手动触发。
 
 ## 本地运行
@@ -40,9 +41,9 @@ tech-content-weekly --send
 
 默认列表当前包含：
 
-- Bilibili: 6 configured accounts (see config.toml)
-- YouTube: no enabled accounts; config.toml keeps one commented reference block
-- 小宇宙：Huberman Lab、张小珺商业访谈录、津津乐道、家庭教育圆桌谈、天才捕手FM，以及已有的其他订阅
+- Bilibili: 7 configured accounts (see config.toml)
+- YouTube: 3Blue1Brown（YouTube），提供最新英文原版；B 站官方账号滞后约 5-6 周但带官方中文字幕，两者都追踪
+- 小宇宙：Huberman Lab、张小珺商业访谈录、津津乐道、家庭教育圆桌谈、天才捕手FM、沈奕斐的播客，以及已有的其他订阅
 - 豆瓣读书：非虚构热门榜、科学新知新书速递、商业经管新书速递
 
 豆瓣榜单走自建 RSSHub 的 `douban` 路由，榜单条目没有独立发布时间，程序自动以频道更新时间归类到本周：

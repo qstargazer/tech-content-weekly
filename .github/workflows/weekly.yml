@@ -21,6 +21,7 @@ on:
 jobs:
   test-and-report:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     env:
       YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
