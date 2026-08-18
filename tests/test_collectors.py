@@ -21,6 +21,24 @@ class CollectorTest(unittest.TestCase):
         self.assertEqual(item.duration_seconds, 2525)
         self.assertEqual(item.title, "Episode 1")
 
+    def test_rss_items_falls_back_to_channel_last_build_date(self):
+        creator = Creator("豆瓣", "douban", "book", "https://book.douban.com", feed_url="https://feed")
+        xml = '''<rss><channel><lastBuildDate>Mon, 17 Aug 2026 00:00:00 GMT</lastBuildDate>
+        <item><title>置身事内-兰小欢/上海人民出版社/2021-8</title>
+        <link>https://www.douban.com/doubanapp/dispatch/book/35546622</link>
+        <description>&lt;img src=&quot;x&quot;&gt;&lt;br&gt;置身事内/9.1分</description></item>
+        </channel></rss>'''.encode("utf-8")
+        item = _rss_items(creator, xml)[0]
+        self.assertEqual(item.published, datetime(2026, 8, 17, tzinfo=timezone.utc))
+        self.assertEqual(item.platform, "douban")
+        self.assertIn("9.1分", item.description)
+
+    def test_rss_items_skips_item_without_any_date(self):
+        creator = Creator("豆瓣", "douban", "book", "https://book.douban.com", feed_url="https://feed")
+        xml = b'''<rss><channel><item><title>No date</title>
+        <link>https://www.douban.com/subject/1</link></item></channel></rss>'''
+        self.assertEqual(_rss_items(creator, xml), [])
+
     @patch.dict(os.environ, {"YOUTUBE_API_KEY": "secret"}, clear=False)
     @patch("tech_content_weekly.collectors._json")
     def test_youtube_uses_official_api_fields(self, mock_json):

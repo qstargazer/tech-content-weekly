@@ -1,15 +1,16 @@
-# Tech Content Weekly
+# Tech Content Weekly · 科技新知周报
 
-自动汇总 Bilibili、YouTube 与播客/小宇宙科技创作者的新内容，生成深绿色、适合 PC 与手机阅读的 HTML/Markdown 周报，并可通过 Gmail 自动发送。
+自动汇总 Bilibili、YouTube、播客/小宇宙与豆瓣热门图书的新内容，生成深绿色、适合 PC 与手机阅读的 HTML/Markdown 周报，并可通过 Gmail 自动发送。
 
-## v0.2 能力
+## v0.3 能力
 
 - YouTube 使用官方 Data API v3，采集上传时间、时长、播放量和评论数。
 - 播客使用公开 RSS/Atom；Bilibili 使用 QNAP 自建 RSSHub，避免依赖容易出现 403 的第三方公共实例。
+- 豆瓣读书使用自建 RSSHub 的热门图书排行与非虚构/新书速递榜单，展示评分。
 - 展示本周新内容；视频按公开播放量统计最近 30 天 Top 3，播客按时间展示最近 3 期。
 - 每个创作者单独容错：失败时读取该创作者最近缓存并在报告中标注，不影响其他来源。
 - 可选 AI 导读：DeepSeek 优先，失败时回退 OpenAI；OpenAI 额度不足只写入 Actions 日志，不在周报中展示。
-- Gmail SMTP 支持多个收件人；GitHub Actions 每周三 07:00（Asia/Shanghai）运行，也可手动触发。
+- Gmail SMTP 支持多个收件人；GitHub Actions 每周二、周五 05:00（Asia/Shanghai）运行，也可手动触发。
 
 ## 本地运行
 
@@ -42,6 +43,21 @@ tech-content-weekly --send
 - Bilibili: 6 configured accounts (see config.toml)
 - YouTube: no enabled accounts; config.toml keeps one commented reference block
 - 小宇宙：Huberman Lab、张小珺商业访谈录、津津乐道、家庭教育圆桌谈、天才捕手FM，以及已有的其他订阅
+- 豆瓣读书：非虚构热门榜、科学新知新书速递、商业经管新书速递
+
+豆瓣榜单走自建 RSSHub 的 `douban` 路由，榜单条目没有独立发布时间，程序自动以频道更新时间归类到本周：
+
+```toml
+[[creators]]
+name = "豆瓣热门图书 · 非虚构"
+platform = "douban"
+id = "douban-book-rank-nonfiction"
+url = "https://book.douban.com/"
+feed_url = "$RSSHUB_BASE_URL/douban/book/rank/nonfiction?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+```
+
+可选榜单：`/douban/book/rank/fiction`（虚构类）、`/douban/book/rank/nonfiction`（非虚构类）；新书速递 `/douban/book/latest/science|business|history|fiction|art|...`。
 
 YouTube / Bilibili 视频默认过滤低于 10 分钟的内容，可在 `config.toml` 中调整：
 
@@ -159,7 +175,7 @@ Variables（普通配置）：
 - `OPENAI_MODEL`（可选）
 - `DEEPSEEK_MODEL`（可选）
 
-进入 `Actions → weekly-content-report → Run workflow` 可手动验证。建议第一次选择 `sample=true`、`send_email=true`，先验证排版和 Gmail；第二次使用在线数据。定时表达式使用 UTC：`0 23 * * 2`，对应上海时间每周三 07:00。
+进入 `Actions → weekly-content-report → Run workflow` 可手动验证。建议第一次选择 `sample=true`、`send_email=true`，先验证排版和 Gmail；第二次使用在线数据。定时表达式使用 UTC：`0 21 * * 1,4`，对应上海时间每周二、周五 05:00。
 
 ## 测试与限制
 

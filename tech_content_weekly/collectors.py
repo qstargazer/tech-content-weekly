@@ -12,7 +12,7 @@ from pathlib import Path
 from .models import ContentItem, Creator
 
 
-USER_AGENT = "tech-content-weekly/0.2 (+personal weekly report)"
+USER_AGENT = "tech-content-weekly/0.3 (+personal weekly report)"
 
 
 def _get(url: str) -> bytes:
@@ -111,31 +111,54 @@ def _rss_duration(node: ET.Element) -> int | None:
     return None
 
 
-def _parse_date(value: str) -> datetime:
+def _parse_date(value: str) -> datetime | None:
+    value = (value or "").strip()
+    if not value:
+        return None
     from email.utils import parsedate_to_datetime
     try:
         result = parsedate_to_datetime(value)
     except (TypeError, ValueError):
-        result = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        try:
+            result = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except ValueError:
+            return None
     return result if result.tzinfo else result.replace(tzinfo=timezone.utc)
+
+
+def _feed_updated(root: ET.Element) -> datetime | None:
+    if root.tag.endswith("feed"):
+        return _parse_date(_text(root, "{http://www.w3.org/2005/Atom}updated"))
+    for name in ("lastBuildDate", "pubDate"):
+        node = root.find(f".//{name}")
+        if node is not None and node.text:
+            return _parse_date(node.text.strip())
+    return None
 
 
 def _rss_items(creator: Creator, data: bytes) -> list[ContentItem]:
     root = ET.fromstring(data)
+    fallback = _feed_updated(root)
     result = []
     if root.tag.endswith("feed"):
         ns = {"a": "http://www.w3.org/2005/Atom"}
         nodes = root.findall("a:entry", ns)
         for node in nodes:
+            published = _parse_date(_text(node, "{http://www.w3.org/2005/Atom}published", "{http://www.w3.org/2005/Atom}updated")) or fallback
+            if published is None:
+                continue
             link = next((item.get("href", "") for item in node.findall("a:link", ns) if item.get("rel", "alternate") == "alternate"), "")
             result.append(ContentItem(creator.name, creator.platform, _text(node, "{http://www.w3.org/2005/Atom}title"), link,
-                                      _parse_date(_text(node, "{http://www.w3.org/2005/Atom}published", "{http://www.w3.org/2005/Atom}updated")),
+                                      published,
                                       _rss_duration(node), description=_text(node, "{http://www.w3.org/2005/Atom}summary")))
     else:
         for node in root.findall(".//item"):
+            published = _parse_date(_text(node, "pubDate", "{http://purl.org/dc/elements/1.1/}date")) or fallback
+            if published is None:
+                continue
             seconds = _rss_duration(node)
             result.append(ContentItem(creator.name, creator.platform, _text(node, "title"), _text(node, "link"),
-                                      _parse_date(_text(node, "pubDate", "{http://purl.org/dc/elements/1.1/}date")),
+                                      published,
                                       seconds, description=re.sub(r"<[^>]+>", " ", _text(node, "description"))[:240]))
     return result
 

@@ -1,10 +1,11 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import unittest
 
 from tech_content_weekly.analytics import monthly_top, weekly_items
 from tech_content_weekly.cli import _timezone
 from tech_content_weekly.config import load_config
+from tech_content_weekly.models import ContentItem
 from tech_content_weekly.report import render_html, render_markdown
 from tech_content_weekly.sample_data import build_sample_items
 
@@ -40,7 +41,8 @@ class ReportTest(unittest.TestCase):
         )
     def test_weekly_filter_and_monthly_top(self):
         weekly = weekly_items(self.items, self.now, 7)
-        self.assertEqual(len(weekly), 5)
+        self.assertEqual(len(weekly), 8)
+        self.assertTrue(any(item.platform == "douban" for item in weekly))
         top = monthly_top(self.items, self.now, 30, 3)
         self.assertEqual(len(top["opus精译"]), 3)
         self.assertGreaterEqual(
@@ -83,14 +85,31 @@ class ReportTest(unittest.TestCase):
         )
         self.assertIn("本期内容导读由 OpenAI 模型 `gpt-5-mini` 生成", result)
 
+    def test_html_renders_douban_section_with_rating(self):
+        book = ContentItem(
+            "豆瓣热门图书 · 非虚构", "douban", "置身事内",
+            "https://book.douban.com/subject/35546622/",
+            self.now - timedelta(days=1), None, None, None,
+            "置身事内/兰小欢/上海人民出版社/2021-8/9.1分",
+        )
+        result = render_html(
+            self.config.report.title, self.config.creators, self.items + [book], self.now
+        )
+        self.assertIn("豆瓣读书本周更新", result)
+        self.assertIn("<span>评分 9.1</span>", result)
+        markdown = render_markdown(
+            self.config.report.title, self.config.creators, self.items + [book], self.now
+        )
+        self.assertIn("评分 9.1", markdown)
+
     def test_shanghai_timezone_fallback_is_available(self):
         shanghai_time = datetime(2026, 8, 13, 12, tzinfo=_timezone("Asia/Shanghai"))
         self.assertEqual(shanghai_time.utcoffset().total_seconds(), 8 * 3600)
 
-    def test_action_runs_wednesday_0700_shanghai(self):
+    def test_action_runs_tuesday_and_friday_0500_shanghai(self):
         workflow = (ROOT / ".github/workflows/weekly.yml").read_text(encoding="utf-8")
-        self.assertIn('cron: "0 23 * * 2"', workflow)
-        self.assertIn("Wednesday 07:00 Asia/Shanghai", workflow)
+        self.assertIn('cron: "0 21 * * 1,4"', workflow)
+        self.assertIn("Tuesday 05:00 and Friday 05:00 Asia/Shanghai", workflow)
 
 
 if __name__ == "__main__":

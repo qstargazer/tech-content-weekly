@@ -1,5 +1,5 @@
 [report]
-title = "科技内容周报"
+title = "科技新知周报"
 timezone = "Asia/Shanghai"
 lookback_days = 7
 monthly_days = 30
@@ -8,7 +8,7 @@ monthly_top_n = 3
 [email]
 enabled = true
 recipients = ["stargazerq@foxmail.com"]
-subject_prefix = "[科技内容周报]"
+subject_prefix = "[科技新知周报]"
 smtp_host = "smtp.gmail.com"
 smtp_port = 465
 
@@ -151,4 +151,29 @@ platform = "podcast"
 id = "xiaoyuzhou-5e77133b418a84a0469fc305"
 url = "https://www.xiaoyuzhoufm.com/podcast/5e77133b418a84a0469fc305"
 feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/5e77133b418a84a0469fc305?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+
+# 豆瓣读书：热门榜单每周一更新；新书速递随平台更新。均通过自建 RSSHub 拉取。
+[[creators]]
+name = "豆瓣热门图书 · 非虚构"
+platform = "douban"
+id = "douban-book-rank-nonfiction"
+url = "https://book.douban.com/"
+feed_url = "$RSSHUB_BASE_URL/douban/book/rank/nonfiction?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+
+[[creators]]
+name = "豆瓣新书速递 · 科学新知"
+platform = "douban"
+id = "douban-book-latest-science"
+url = "https://book.douban.com/latest"
+feed_url = "$RSSHUB_BASE_URL/douban/book/latest/science?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+
+[[creators]]
+name = "豆瓣新书速递 · 商业经管"
+platform = "douban"
+id = "douban-book-latest-business"
+url = "https://book.douban.com/latest"
+feed_url = "$RSSHUB_BASE_URL/douban/book/latest/business?key=$RSSHUB_ACCESS_KEY"
 enabled = true
