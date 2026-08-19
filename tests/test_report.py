@@ -35,6 +35,7 @@ class ReportTest(unittest.TestCase):
                 "1787393235": "bilibili",
                 "3691003189922747": "bilibili",
                 "UCYO_jab_esuFRV4b17AJtAw": "youtube",
+                "UCYPT3wl0MgbOz63ho166KOw": "youtube",
             },
         )
         bilibili = next(c for c in self.config.creators if c.id == "88461692")
