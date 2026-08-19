@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Delete output/report files older than the retention window (default 21 days).
 
 Usage (run from the repo root in CI):
@@ -13,7 +12,7 @@ from __future__ import annotations
 import re
 import shutil
 import sys
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 DATE_RE = re.compile(r"(20\d{2})[-_.](\d{2})[-_.](\d{2})")
@@ -46,7 +45,7 @@ def main(argv: list[str] | None = None) -> int:
     if not patterns:
         print("usage: prune_outputs.py <glob ...>", file=sys.stderr)
         return 2
-    cutoff = date.today() - timedelta(days=RETAIN_DAYS)
+    cutoff = datetime.now(UTC).date() - timedelta(days=RETAIN_DAYS)
     removed = 0
     for pattern in patterns:
         for path in Path(".").glob(pattern):
