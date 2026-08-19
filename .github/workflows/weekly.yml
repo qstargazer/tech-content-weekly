@@ -14,9 +14,9 @@ on:
         type: boolean
         default: true
   schedule:
-    # Monday 21:00 UTC and Thursday 21:00 UTC =
-    # Tuesday 05:00 and Friday 05:00 Asia/Shanghai.
-    - cron: "0 21 * * 1,4"
+    # Monday 21:13 UTC and Thursday 21:13 UTC =
+    # Tuesday 05:13 and Friday 05:13 Asia/Shanghai.
+    - cron: "13 21 * * 1,4"
 
 jobs:
   test-and-report:
