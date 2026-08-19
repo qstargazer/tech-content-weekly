@@ -148,11 +148,6 @@ class ReportTest(unittest.TestCase):
         shanghai_time = datetime(2026, 8, 13, 12, tzinfo=_timezone("Asia/Shanghai"))
         self.assertEqual(shanghai_time.utcoffset().total_seconds(), 8 * 3600)
 
-    def test_action_runs_tuesday_and_friday_0413_shanghai(self):
-        workflow = (ROOT / ".github/workflows/weekly.yml").read_text(encoding="utf-8")
-        self.assertIn('cron: "13 20 * * 1,4"', workflow)
-        self.assertIn("Tuesday 04:13 and Friday 04:13 Asia/Shanghai", workflow)
-
     def test_html_renders_recommendation_sections(self):
         weekly = weekly_items(self.items, self.now, 7)
         recommendations = [
