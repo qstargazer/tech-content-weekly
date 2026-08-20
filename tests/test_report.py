@@ -32,7 +32,8 @@ class ReportTest(unittest.TestCase):
                 "280780745": "bilibili",
                 "88461692": "bilibili",
                 "517221395": "bilibili",
-                "1787393235": "bilibili",
+                "11648134": "bilibili",
+                "349169140": "bilibili",
                 "3691003189922747": "bilibili",
                 "UCYO_jab_esuFRV4b17AJtAw": "youtube",
                 "UCYPT3wl0MgbOz63ho166KOw": "youtube",
@@ -40,6 +41,11 @@ class ReportTest(unittest.TestCase):
         )
         bilibili = next(c for c in self.config.creators if c.id == "88461692")
         self.assertEqual(bilibili.name, "3Blue1Brown（B站官方）")
+        cycling = next(c for c in self.config.creators if c.id == "11648134")
+        self.assertEqual(cycling.name, "MUSI的运动日记 · 骑行路线")
+        self.assertEqual(cycling.url, "https://space.bilibili.com/11648134")
+        additional = next(c for c in self.config.creators if c.id == "349169140")
+        self.assertEqual(additional.url, "https://space.bilibili.com/349169140")
         youtube = next(c for c in self.config.creators if c.id == "UCYO_jab_esuFRV4b17AJtAw")
         self.assertEqual(youtube.name, "3Blue1Brown（YouTube）")
     def test_weekly_filter_and_monthly_top(self):

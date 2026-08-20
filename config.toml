@@ -57,12 +57,20 @@ enabled = true
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/517221395?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
-name = "常青藤名校课"
+name = "MUSI的运动日记 · 骑行路线"
 platform = "bilibili"
-id = "1787393235"
-url = "https://space.bilibili.com/1787393235"
+id = "11648134"
+url = "https://space.bilibili.com/11648134"
 enabled = true
-feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/1787393235?key=$RSSHUB_ACCESS_KEY"
+feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/11648134?key=$RSSHUB_ACCESS_KEY"
+
+[[creators]]
+name = "Bilibili账号 349169140"
+platform = "bilibili"
+id = "349169140"
+url = "https://space.bilibili.com/349169140"
+enabled = true
+feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/349169140?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
 name = "DwarkeshPatel"
