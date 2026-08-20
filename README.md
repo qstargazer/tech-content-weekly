@@ -41,7 +41,7 @@ tech-content-weekly --send
 
 默认列表当前包含：
 
-- Bilibili: 7 configured accounts (see config.toml)
+- Bilibili: 8 configured accounts (including “MUSI的运动日记 · 骑行路线” and account 349169140; see config.toml)
 - YouTube: 3Blue1Brown（YouTube），提供最新英文原版；B 站官方账号滞后约 5-6 周但带官方中文字幕，两者都追踪
 - 小宇宙：Huberman Lab、张小珺商业访谈录、津津乐道、家庭教育圆桌谈、天才捕手FM、沈奕斐的播客，以及已有的其他订阅
 - 豆瓣读书：非虚构热门榜、科学新知新书速递、商业经管新书速递
