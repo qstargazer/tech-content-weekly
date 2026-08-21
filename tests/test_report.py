@@ -35,6 +35,8 @@ class ReportTest(unittest.TestCase):
                 "11648134": "bilibili",
                 "349169140": "bilibili",
                 "3691003189922747": "bilibili",
+                "171480802": "bilibili",
+                "268831110": "bilibili",
                 "UCYO_jab_esuFRV4b17AJtAw": "youtube",
                 "UCYPT3wl0MgbOz63ho166KOw": "youtube",
             },
@@ -58,6 +60,18 @@ class ReportTest(unittest.TestCase):
             top["opus精译"][0].view_count,
             top["opus精译"][1].view_count,
         )
+
+    def test_html_contains_schedule_note(self):
+        result = render_html(
+            self.config.report.title, self.config.creators, self.items, self.now,
+            schedule_note="每周二、周五发送",
+        )
+        self.assertIn('<p class="schedule">每周二、周五发送</p>', result)
+        markdown = render_markdown(
+            self.config.report.title, self.config.creators, self.items, self.now,
+            schedule_note="每周二、周五发送",
+        )
+        self.assertIn("> 发送频率：每周二、周五发送", markdown)
 
     def test_html_contains_metrics_podcast_caveat_and_wide_layout(self):
         result = render_html(

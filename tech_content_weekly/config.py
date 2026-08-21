@@ -15,6 +15,7 @@ class ReportConfig:
     lookback_days: int
     monthly_days: int
     monthly_top_n: int
+    schedule_note: str = ""
 
 
 @dataclass(frozen=True)

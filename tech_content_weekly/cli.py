@@ -75,12 +75,14 @@ def run(config_path: Path, output_dir: Path, sample: bool, send: bool = False) -
         config.report.title, config.creators, items, now,
         insight, provider, model, warnings,
         recommendations, top_pick, rec_provider, rec_model,
+        config.report.schedule_note,
     )
     page = render_html(
         config.report.title, config.creators, items, now,
         config.report.lookback_days, config.report.monthly_days, config.report.monthly_top_n,
         insight, provider, model, warnings,
         recommendations, top_pick, rec_provider, rec_model,
+        config.report.schedule_note,
     )
     stem = now.date().isoformat()
     md_path = output_dir / f"weekly-{stem}.md"

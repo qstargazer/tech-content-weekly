@@ -4,6 +4,7 @@ timezone = "Asia/Shanghai"
 lookback_days = 7
 monthly_days = 30
 monthly_top_n = 3
+schedule_note = "每周二、周五发送"
 
 [email]
 enabled = true
@@ -79,6 +80,22 @@ id = "3691003189922747"
 url = "https://space.bilibili.com/3691003189922747"
 enabled = true
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/3691003189922747?key=$RSSHUB_ACCESS_KEY"
+
+[[creators]]
+name = "魔都深观察"
+platform = "bilibili"
+id = "171480802"
+url = "https://space.bilibili.com/171480802"
+enabled = true
+feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/171480802?key=$RSSHUB_ACCESS_KEY"
+
+[[creators]]
+name = "行者小墨墨"
+platform = "bilibili"
+id = "268831110"
+url = "https://space.bilibili.com/268831110"
+enabled = true
+feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/268831110?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
 name = "3Blue1Brown（YouTube）"
