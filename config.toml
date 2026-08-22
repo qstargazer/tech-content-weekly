@@ -112,6 +112,13 @@ url = "https://www.youtube.com/@xiaodaodalang"
 enabled = true
 
 [[creators]]
+name = "初日医学 - 宋晏仁医师 x Cofit"
+platform = "youtube"
+id = "UCzOblez4o3mZEkpOeFZdHWQ"
+url = "https://www.youtube.com/@cofit211"
+enabled = true
+
+[[creators]]
 name = "自习室 STUDY ROOM"
 platform = "podcast"
 id = "xiaoyuzhou-65a5fb7540d4ef949c0140ac"
