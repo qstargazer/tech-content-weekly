@@ -11,7 +11,7 @@
 - 每个创作者单独容错：失败时读取该创作者最近缓存并在报告中标注，不影响其他来源。
 - 可选 AI 导读：DeepSeek 优先，失败时回退 OpenAI；OpenAI 额度不足只写入 Actions 日志，不在周报中展示。
 - 场景分类推荐：将本周内容分为「通勤 / 碎片时间」与「需要专门时间深入研究」两类并给出理由，附本周最值得投入的一条。AI 可用时由模型分类，否则使用内置规则兜底。
-- Gmail SMTP 支持多个收件人；GitHub Actions 每周二、周五 05:00（Asia/Shanghai）运行，也可手动触发。
+- Gmail SMTP 支持多个收件人；GitHub Actions 每周二、周五 04:13（Asia/Shanghai）运行，也可手动触发。
 
 ## 本地运行
 
@@ -41,8 +41,8 @@ tech-content-weekly --send
 
 默认列表当前包含：
 
-- Bilibili: 8 configured accounts (including “MUSI的运动日记 · 骑行路线” and account 349169140; see config.toml)
-- YouTube: 3Blue1Brown（YouTube）、初日医学 - 宋晏仁医师 x Cofit、和之梦 - 官方频道；分别提供英文科普、健康内容和中日纪录片内容
+- Bilibili：9 个账号（包括“opus精译”“MUSI的运动日记 · 骑行路线”和账号 349169140，详见 config.toml）
+- YouTube：3Blue1Brown（YouTube）、小岛浪吹、初日医学 - 宋晏仁医师 x Cofit、和之梦 - 官方频道；分别提供英文科普、中文内容、健康内容和中日纪录片内容
 - 小宇宙：Huberman Lab、张小珺商业访谈录、津津乐道、家庭教育圆桌谈、天才捕手FM、沈奕斐的播客，以及已有的其他订阅
 - 豆瓣读书：非虚构热门榜、科学新知新书速递、商业经管新书速递
 
@@ -166,17 +166,17 @@ Secrets（敏感值）：
 - `DEEPSEEK_API_KEY`
 - `SMTP_USER`
 - `SMTP_PASSWORD`
+- `RSSHUB_ACCESS_KEY`
 
 Variables（普通配置）：
 
 - `EMAIL_RECIPIENTS`，例如 `stargazerq@foxmail.com,871517518@qq.com`
 - `RSSHUB_BASE_URL`，QNAP RSSHub 地址，例如 `http://192.168.100.172:1200`；仅适用于能访问 QNAP 内网的 self-hosted runner
-- `RSSHUB_ACCESS_KEY`（Secret），RSSHub 的访问密钥；公网 RSSHub 必须配置
 - `SMTP_FROM`（可选）
 - `OPENAI_MODEL`（可选）
 - `DEEPSEEK_MODEL`（可选）
 
-进入 `Actions → weekly-content-report → Run workflow` 可手动验证。建议第一次选择 `sample=true`、`send_email=true`，先验证排版和 Gmail；第二次使用在线数据。定时表达式使用 UTC：`0 21 * * 1,4`，对应上海时间每周二、周五 05:00。
+进入 `Actions → weekly-content-report → Run workflow` 可手动验证。建议第一次选择 `sample=true`、`send_email=true`，先验证排版和 Gmail；第二次使用在线数据。当前定时表达式使用 UTC：`13 20 * * 1,4`，对应上海时间每周二、周五 04:13。工作流当前运行在 GitHub-hosted `ubuntu-latest`；若使用 QNAP 内网 RSSHub，需要改用能访问 QNAP 的 self-hosted runner，或提供受保护的公网 RSSHub 地址。
 
 ## 测试与限制
 
