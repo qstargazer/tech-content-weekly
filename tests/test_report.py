@@ -40,6 +40,7 @@ class ReportTest(unittest.TestCase):
                 "UCYO_jab_esuFRV4b17AJtAw": "youtube",
                 "UCYPT3wl0MgbOz63ho166KOw": "youtube",
                 "UCzOblez4o3mZEkpOeFZdHWQ": "youtube",
+                "UCwHUYtwH5E41O6MiYoC19ng": "youtube",
             },
         )
         bilibili = next(c for c in self.config.creators if c.id == "88461692")
@@ -54,6 +55,9 @@ class ReportTest(unittest.TestCase):
         doctor = next(c for c in self.config.creators if c.id == "UCzOblez4o3mZEkpOeFZdHWQ")
         self.assertEqual(doctor.name, "初日医学 - 宋晏仁医师 x Cofit")
         self.assertEqual(doctor.url, "https://www.youtube.com/@cofit211")
+        hezhimeng = next(c for c in self.config.creators if c.id == "UCwHUYtwH5E41O6MiYoC19ng")
+        self.assertEqual(hezhimeng.name, "和之梦 - 官方频道")
+        self.assertEqual(hezhimeng.url, "https://www.youtube.com/channel/UCwHUYtwH5E41O6MiYoC19ng")
     def test_weekly_filter_and_monthly_top(self):
         weekly = weekly_items(self.items, self.now, 7)
         self.assertEqual(len(weekly), 8)

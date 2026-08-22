@@ -119,6 +119,13 @@ url = "https://www.youtube.com/@cofit211"
 enabled = true
 
 [[creators]]
+name = "和之梦 - 官方频道"
+platform = "youtube"
+id = "UCwHUYtwH5E41O6MiYoC19ng"
+url = "https://www.youtube.com/channel/UCwHUYtwH5E41O6MiYoC19ng"
+enabled = true
+
+[[creators]]
 name = "自习室 STUDY ROOM"
 platform = "podcast"
 id = "xiaoyuzhou-65a5fb7540d4ef949c0140ac"
