@@ -10,7 +10,13 @@ from .analytics import monthly_top, weekly_items
 from .models import CATEGORY_COMMUTE, CATEGORY_DEEP, ContentItem, Creator, Recommendation
 
 
-PLATFORM_NAMES = {"bilibili": "哔哩哔哩", "youtube": "YouTube", "podcast": "播客 / 小宇宙", "douban": "豆瓣读书"}
+PLATFORM_NAMES = {
+    "bilibili": "哔哩哔哩",
+    "youtube": "YouTube",
+    "podcast": "播客 / 小宇宙",
+    "douban": "豆瓣读书",
+    "wechat": "微信公众号",
+}
 
 RECOMMENDATION_LABELS = {
     CATEGORY_COMMUTE: "通勤 / 碎片时间",
@@ -98,8 +104,8 @@ def _table_row(item: ContentItem, now: datetime) -> str:
     if item.platform == "douban":
         rating = _book_rating(item)
         metrics = f"评分 {rating}" if rating else "豆瓣榜单"
-    elif item.platform == "podcast":
-        metrics = f"{_duration(item.duration_seconds)} / RSS / -"
+    elif item.platform in {"podcast", "wechat"}:
+        metrics = "公开 RSS / -" if item.platform == "wechat" else f"{_duration(item.duration_seconds)} / RSS / -"
     else:
         metrics = f"{_duration(item.duration_seconds)} / {_count(item.view_count)} / {_count(item.comment_count)}"
     return (
@@ -119,8 +125,8 @@ def _card(item: ContentItem, now: datetime, rank: int | None = None) -> str:
     if item.platform == "douban":
         rating = _book_rating(item)
         metrics = [f"<span>评分 {rating}</span>"] if rating else ["<span>豆瓣图书</span>"]
-    elif item.platform == "podcast":
-        metrics = [f"<span>时长 {_duration(item.duration_seconds)}</span>", "<span>公开 RSS</span>"]
+    elif item.platform in {"podcast", "wechat"}:
+        metrics = ["<span>公众号文章</span>", "<span>RSS</span>"] if item.platform == "wechat" else [f"<span>时长 {_duration(item.duration_seconds)}</span>", "<span>公开 RSS</span>"]
     else:
         metrics = [
             f"<span>时长 {_duration(item.duration_seconds)}</span>",

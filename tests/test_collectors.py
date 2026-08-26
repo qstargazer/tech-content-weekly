@@ -84,6 +84,18 @@ class CollectorTest(unittest.TestCase):
             rows, _ = collect_all((creator,), datetime(2026, 8, 1, tzinfo=timezone.utc), Path(raw), 600)
         self.assertEqual([row.title for row in rows], ["long", "unknown"])
 
+    @patch("tech_content_weekly.collectors._get")
+    def test_wechat_feed_is_collected_without_video_filter(self, mock_get):
+        mock_get.return_value = b'''<rss><channel><item><title>Jalapeno</title>
+        <link>https://mp.weixin.qq.com/s/Zv-k3gsflOU56CX0NtZ9Aw</link>
+        <pubDate>Wed, 26 Aug 2026 08:00:00 GMT</pubDate>
+        <description>AI hardware</description></item></channel></rss>'''
+        creator = Creator("NeuralTalk", "wechat", "neuraltalk", "https://mp.weixin.qq.com/s/Zv-k3gsflOU56CX0NtZ9Aw", feed_url="https://feed")
+        with TemporaryDirectory() as raw:
+            rows, _ = collect_all((creator,), datetime(2026, 8, 1, tzinfo=timezone.utc), Path(raw), 600)
+        self.assertEqual(rows[0].title, "Jalapeno")
+        self.assertEqual(rows[0].platform, "wechat")
+
 
 if __name__ == "__main__":
     unittest.main()

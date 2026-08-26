@@ -1,12 +1,13 @@
 # Tech Content Weekly · 科技新知周报
 
-自动汇总 Bilibili、YouTube、播客/小宇宙与豆瓣热门图书的新内容，生成深绿色、适合 PC 与手机阅读的 HTML/Markdown 周报，并可通过 Gmail 自动发送。
+自动汇总 Bilibili、YouTube、播客/小宇宙、微信公众号与豆瓣热门图书的新内容，生成深绿色、适合 PC 与手机阅读的 HTML/Markdown 周报，并可通过 Gmail 自动发送。
 
 ## v0.3 能力
 
 - YouTube 使用官方 Data API v3，采集上传时间、时长、播放量和评论数。
 - 播客使用公开 RSS/Atom；Bilibili 使用 QNAP 自建 RSSHub，避免依赖容易出现 403 的第三方公共实例。
 - 豆瓣读书使用自建 RSSHub 的热门图书排行与非虚构/新书速递榜单，展示评分。
+- 微信公众号通过自建 RSSHub 的新榜路由监视；当前配置包含 NeuralTalk。微信公众号没有官方 RSS，需在 RSSHub 侧配置 `NEWRANK_COOKIE`，并接受偶发风控或延迟。
 - 展示本周新内容；视频按公开播放量统计最近 30 天 Top 3，播客按时间展示最近 3 期。
 - 每个创作者单独容错：失败时读取该创作者最近缓存并在报告中标注，不影响其他来源。
 - 可选 AI 导读：DeepSeek 优先，失败时回退 OpenAI；OpenAI 额度不足只写入 Actions 日志，不在周报中展示。
@@ -152,6 +153,7 @@ RSSHub 镜像版本应在升级前固定并保留旧镜像；Compose 文件中�
 | `EMAIL_RECIPIENTS` | 否 | 覆盖 TOML 收件人，多个地址用英文逗号分隔 |
 | `RSSHUB_BASE_URL` | RSSHub 来源必需 | QNAP 自建 RSSHub 地址，例如 `https://rsshub.example.com:10443` |
 | `RSSHUB_ACCESS_KEY` | RSSHub 必需 | RSSHub 访问密钥；只放在 GitHub Secrets / QNAP `.env` |
+| `NEWRANK_COOKIE` | 监视微信公众号时 | 仅放在 QNAP RSSHub 的 `.env`，用于新榜微信公众号路由 |
 
 默认模型为 `deepseek-chat` 和 `gpt-5-mini`。如果 DeepSeek 不可用，程序才尝试 OpenAI；两个服务都不可用时保留基础数据报告。
 
@@ -177,6 +179,82 @@ Variables（普通配置）：
 - `DEEPSEEK_MODEL`（可选）
 
 进入 `Actions → weekly-content-report → Run workflow` 可手动验证。建议第一次选择 `sample=true`、`send_email=true`，先验证排版和 Gmail；第二次使用在线数据。当前定时表达式使用 UTC：`13 20 * * 1,4`，对应上海时间每周二、周五 04:13。工作流当前运行在 GitHub-hosted `ubuntu-latest`；若使用 QNAP 内网 RSSHub，需要改用能访问 QNAP 的 self-hosted runner，或提供受保护的公网 RSSHub 地址。
+
+### 配置微信公众号
+
+微信公众号没有官方 RSS。本项目使用 RSSHub 的新榜路由 `/newrank/wechat/:wxid` 获取公众号文章列表，再尝试补全文章正文。该路由要求登录新榜（`newrank.cn`）后的 Cookie；Cookie 会过期，也可能因新榜或微信反爬策略变化而暂时失效。
+
+#### 获取 `NEWRANK_COOKIE`
+
+建议使用 Chrome 或 Edge 桌面浏览器，并在自己的电脑上完成以下操作：
+
+1. 打开 `https://www.newrank.cn/`，登录新榜账号。账号不需要提交给本仓库，但必须能够访问公众号数据页面。
+2. 登录成功后打开任意新榜页面，按 `F12` 打开开发者工具。
+3. 切换到 `Application`（应用）选项卡；如果看不到，点击 `»` 展开更多选项。
+4. 左侧展开 `Storage → Cookies → https://www.newrank.cn`。
+5. 找到名称为 `token` 的 Cookie，复制它的 `Value`。RSSHub 官方配置说明中，`token` 是必要部分，其他 Cookie 字段可以不复制。
+6. 如果 Cookie 列表中没有 `token`，切换到 `Network`（网络），刷新页面，打开一个发往 `www.newrank.cn` 的请求，在 `Request Headers` 中找到 `Cookie`，复制其中的 `token=...` 部分。不要复制或公开完整浏览器 Cookie。
+
+`NEWRANK_COOKIE` 的值应类似下面这样，只保留 `token`，不要包含反引号：
+
+```text
+token=这里替换为新榜登录后的token值
+```
+
+#### 写入 QNAP RSSHub
+
+1. 在 QNAP 上进入 RSSHub Compose 目录。该目录中应有 `docker-compose.yml` 和 `.env`；没有 `.env` 时复制仓库提供的 `deploy/rsshub/.env.example`。
+2. 编辑 `.env`，加入刚才复制的值：
+
+```dotenv
+NEWRANK_COOKIE=token=这里替换为新榜登录后的token值
+```
+
+3. 确认 `.env` 仅保存在 QNAP，不要提交到 Git，也不要放进 GitHub Actions 的 Secrets 或公开聊天。
+4. 在该 Compose 目录重新创建 RSSHub 容器，使环境变量生效：
+
+```bash
+docker compose up -d
+```
+
+5. 在能访问 QNAP 的电脑上验证 NeuralTalk 路由。将 `QNAP_IP` 和访问密钥替换为实际值：
+
+```text
+http://QNAP_IP:1200/newrank/wechat/NeuralTalk?key=RSSHUB_ACCESS_KEY
+```
+
+浏览器应返回 XML/RSS，且至少能看到文章标题、链接和发布时间。若返回 `ConfigNotFoundError`，说明容器没有读到 `NEWRANK_COOKIE`；若只有标题没有正文，通常是 Cookie 失效、正文补全被微信拦截，或当前 RSSHub 镜像版本与新榜接口不兼容。
+
+#### 常见问题
+
+- `NEWRANK_COOKIE` 不是微信公众号文章链接，也不是 RSSHub 的 `RSSHUB_ACCESS_KEY`，两者用途不同。
+- Cookie 中的 `token` 过期后，重新从新榜浏览器会话获取并替换 QNAP `.env`，然后再次执行 `docker compose up -d`。
+- 路由参数是新榜账号标识，不一定等于公众号显示名称。当前 NeuralTalk 使用 `NeuralTalk`；如果新榜页面 URL 中显示了其他 `account` 值，应以该值为准，并同步修改 `config.toml` 中的 `feed_url`。
+- 如果只需要标题和链接，RSSHub 可以正常返回列表但正文可能为空；周报仍会收录文章，但 AI 导读信息会较少。
+
+### 监视其他微信公众号
+
+可以。每个公众号增加一个 `[[creators]]` 配置块即可，但每个账号都必须先能被新榜识别，并使用同一个有效的 `NEWRANK_COOKIE`：
+
+```toml
+[[creators]]
+name = "其他公众号名称"
+platform = "wechat"
+id = "other-account"
+url = "https://mp.weixin.qq.com/s/该公众号的一篇文章链接"
+feed_url = "$RSSHUB_BASE_URL/newrank/wechat/新榜账号标识?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+```
+
+获取其他公众号的账号标识时，可以先将该公众号的一篇文章提交到新榜的公众号搜索或账号页面，查看页面 URL 中的 `account` 值。RSSHub 路由的参数说明是“微信号；若微信号与新榜信息不一致，以新榜为准”。配置后先直接访问对应 RSS URL 验证，再运行周报。
+
+需要注意：
+
+- 可以添加多个公众号，程序会并行采集，每个来源独立缓存和容错。
+- 不建议为每个公众号配置一套 Cookie；通常一个新榜登录 Cookie 可以访问多个账号，但具体权限以新榜账号为准。
+- 新榜和微信都存在反爬限制，不应高频刷新；周报按现有计划运行即可。
+- 公众号文章可能删除、限制访问或延迟进入新榜，程序无法保证实时性和永久可读性。
+- 也可以使用其他能输出 RSS/Atom 的公众号服务，只需将其 RSS 地址填入 `feed_url`，`platform` 仍使用 `wechat`；不要把第三方服务的密码或私有 Token 直接写进 `config.toml`。
 
 ## 测试与限制
 
