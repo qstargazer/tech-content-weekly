@@ -35,7 +35,7 @@ def build_sample_items(now: datetime) -> list[ContentItem]:
         item("Dwarkesh Patel", "youtube", "Scaling, intelligence, and the future of AI", "https://www.youtube.com/watch?v=sample05", 3, 7210, 1_102_000, 3_892, "A deeply researched conversation about scaling and intelligence."),
         item("Dwarkesh Patel", "youtube", "Inside the economics of compute", "https://www.youtube.com/watch?v=sample06", 11, 6840, 836_000, 2_744, "Long-form analysis of compute, capital, and AI progress."),
         item("Dwarkesh Patel", "youtube", "How scientific discovery could accelerate", "https://www.youtube.com/watch?v=sample07", 22, 7560, 724_000, 2_109, "A discussion about AI-assisted scientific discovery."),
-        item("豆瓣热门图书 · 非虚构", "douban", "置身事内：中国政府与经济发展", "https://book.douban.com/subject/35546622/", 1, None, None, None, "置身事内/兰小欢/上海人民出版社/2021-8/9.1分"),
-        item("豆瓣热门图书 · 非虚构", "douban", "也许你该找个人聊聊", "https://book.douban.com/subject/35481512/", 2, None, None, None, "也许你该找个人聊聊/[美]洛莉·戈特利布/上海文化出版社/2021-7-28/9.0分"),
+        item("豆瓣新书速递 · 科学新知", "douban", "置身事内：中国政府与经济发展", "https://book.douban.com/subject/35546622/", 1, None, None, None, "置身事内/兰小欢/上海人民出版社/2021-8/9.1分"),
+        item("豆瓣新书速递 · 科学新知", "douban", "也许你该找个人聊聊", "https://book.douban.com/subject/35481512/", 2, None, None, None, "也许你该找个人聊聊/[美]洛莉·戈特利布/上海文化出版社/2021-7-28/9.0分"),
         item("豆瓣新书速递 · 科学新知", "douban", "芯片战争：世界最关键技术的争夺战", "https://book.douban.com/subject/36067023/", 3, None, None, None, "芯片战争/[美]克里斯·米勒/浙江人民出版社/2023-1/8.9分"),
     ]

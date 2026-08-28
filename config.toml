@@ -1,5 +1,5 @@
 [report]
-title = "科技新知周报"
+title = "认知漫游周报"
 timezone = "Asia/Shanghai"
 lookback_days = 7
 monthly_days = 30
@@ -9,7 +9,7 @@ schedule_note = "每周二、周五发送"
 [email]
 enabled = true
 recipients = ["stargazerq@foxmail.com"]
-subject_prefix = "[科技新知周报]"
+subject_prefix = "[认知漫游周报]"
 smtp_host = "smtp.gmail.com"
 smtp_port = 465
 
@@ -126,6 +126,20 @@ url = "https://www.youtube.com/channel/UCwHUYtwH5E41O6MiYoC19ng"
 enabled = true
 
 [[creators]]
+name = "政经孙老师"
+platform = "youtube"
+id = "UC1Lk6WO-eKuYc6GHYbKVY2g"
+url = "https://www.youtube.com/@sunlao"
+enabled = true
+
+[[creators]]
+name = "小翠时政财经"
+platform = "youtube"
+id = "UCOhck8oLoIwSJzmwYMXsSnQ"
+url = "https://www.youtube.com/@cui_news"
+enabled = true
+
+[[creators]]
 name = "NeuralTalk"
 platform = "wechat"
 id = "neuraltalk"
@@ -221,15 +235,7 @@ url = "https://www.xiaoyuzhoufm.com/podcast/6388760f22567e8ea6ad070f"
 feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/6388760f22567e8ea6ad070f?key=$RSSHUB_ACCESS_KEY"
 enabled = true
 
-# 豆瓣读书：热门榜单每周一更新；新书速递随平台更新。均通过自建 RSSHub 拉取。
-[[creators]]
-name = "豆瓣热门图书 · 非虚构"
-platform = "douban"
-id = "douban-book-rank-nonfiction"
-url = "https://book.douban.com/"
-feed_url = "$RSSHUB_BASE_URL/douban/book/rank/nonfiction?key=$RSSHUB_ACCESS_KEY"
-enabled = true
-
+# 豆瓣读书：新书速递随平台更新，通过自建 RSSHub 拉取。
 [[creators]]
 name = "豆瓣新书速递 · 科学新知"
 platform = "douban"
@@ -244,4 +250,20 @@ platform = "douban"
 id = "douban-book-latest-business"
 url = "https://book.douban.com/latest"
 feed_url = "$RSSHUB_BASE_URL/douban/book/latest/business?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+
+[[creators]]
+name = "豆瓣新书速递 · 历史文化"
+platform = "douban"
+id = "douban-book-latest-history"
+url = "https://book.douban.com/latest"
+feed_url = "$RSSHUB_BASE_URL/douban/book/latest/history?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+
+[[creators]]
+name = "豆瓣新书速递 · 社会纪实"
+platform = "douban"
+id = "douban-book-latest-biography"
+url = "https://book.douban.com/latest"
+feed_url = "$RSSHUB_BASE_URL/douban/book/latest/biography?key=$RSSHUB_ACCESS_KEY"
 enabled = true
