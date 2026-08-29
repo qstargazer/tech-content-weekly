@@ -126,28 +126,6 @@ url = "https://www.youtube.com/channel/UCwHUYtwH5E41O6MiYoC19ng"
 enabled = true
 
 [[creators]]
-name = "政经孙老师"
-platform = "youtube"
-id = "UC1Lk6WO-eKuYc6GHYbKVY2g"
-url = "https://www.youtube.com/@sunlao"
-enabled = true
-
-[[creators]]
-name = "小翠时政财经"
-platform = "youtube"
-id = "UCOhck8oLoIwSJzmwYMXsSnQ"
-url = "https://www.youtube.com/@cui_news"
-enabled = true
-
-[[creators]]
-name = "NeuralTalk"
-platform = "wechat"
-id = "neuraltalk"
-url = "https://mp.weixin.qq.com/s/Zv-k3gsflOU56CX0NtZ9Aw"
-feed_url = "$RSSHUB_BASE_URL/newrank/wechat/NeuralTalk?key=$RSSHUB_ACCESS_KEY"
-enabled = true
-
-[[creators]]
 name = "自习室 STUDY ROOM"
 platform = "podcast"
 id = "xiaoyuzhou-65a5fb7540d4ef949c0140ac"
