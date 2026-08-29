@@ -43,7 +43,7 @@ tech-content-weekly --send
 默认列表当前包含：
 
 - Bilibili：9 个账号（包括“opus精译”“MUSI的运动日记 · 骑行路线”和账号 349169140，详见 config.toml）
-- YouTube：3Blue1Brown（YouTube）、小岛浪吹、初日医学 - 宋晏仁医师 x Cofit、和之梦 - 官方频道；分别提供英文科普、中文内容、健康内容和中日纪录片内容
+- YouTube：3Blue1Brown（YouTube）、小岛浪吹、初日医学 - 宋晏仁医师 x Cofit、和之梦 - 官方频道、FearNation 世界苦茶；分别提供英文科普、中文内容、健康内容、中日纪录片和新闻综述内容
 - 小宇宙：Huberman Lab、张小珺商业访谈录、津津乐道、家庭教育圆桌谈、天才捕手FM、沈奕斐的播客，以及已有的其他订阅
 - 豆瓣读书：科学新知、商业经管、历史文化、社会纪实新书速递
 

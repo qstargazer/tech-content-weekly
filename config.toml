@@ -126,6 +126,13 @@ url = "https://www.youtube.com/channel/UCwHUYtwH5E41O6MiYoC19ng"
 enabled = true
 
 [[creators]]
+name = "FearNation 世界苦茶"
+platform = "youtube"
+id = "UCLKsaKMS_5RQuM0wHLp2vVg"
+url = "https://www.youtube.com/@flipradio_fearnation"
+enabled = true
+
+[[creators]]
 name = "自习室 STUDY ROOM"
 platform = "podcast"
 id = "xiaoyuzhou-65a5fb7540d4ef949c0140ac"
