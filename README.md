@@ -42,7 +42,7 @@ tech-content-weekly --send
 
 默认列表当前包含：
 
-- Bilibili：9 个账号（包括“opus精译”“MUSI的运动日记 · 骑行路线”和账号 349169140，详见 config.toml）
+- Bilibili：10 个账号（包括“opus精译”“极客湾Geekerwan”“MUSI的运动日记 · 骑行路线”和账号 349169140，详见 config.toml）
 - YouTube：3Blue1Brown（YouTube）、小岛浪吹、初日医学 - 宋晏仁医师 x Cofit、和之梦 - 官方频道、FearNation 世界苦茶；分别提供英文科普、中文内容、健康内容、中日纪录片和新闻综述内容
 - 小宇宙：Huberman Lab、张小珺商业访谈录、津津乐道、家庭教育圆桌谈、天才捕手FM、沈奕斐的播客，以及已有的其他订阅
 - 豆瓣读书：科学新知、商业经管、历史文化、社会纪实新书速递
@@ -169,6 +169,7 @@ Secrets（敏感值）：
 - `SMTP_USER`
 - `SMTP_PASSWORD`
 - `RSSHUB_ACCESS_KEY`
+- `GITEE_VAULT_SSH_KEY`（可选）要同步 Markdown 到 Obsidian 仓库 `git@gitee.com:sixtrees/ob_work_ver.git` 时配置；未配置时跳过发布
 
 Variables（普通配置）：
 
@@ -179,6 +180,13 @@ Variables（普通配置）：
 - `DEEPSEEK_MODEL`（可选）
 
 进入 `Actions → weekly-content-report → Run workflow` 可手动验证。建议第一次选择 `sample=true`、`send_email=true`，先验证排版和 Gmail；第二次使用在线数据。当前定时表达式使用 UTC：`24 20 * * 1,4`，对应上海时间每周二、周五 04:24。工作流当前运行在 GitHub-hosted `ubuntu-latest`；若使用 QNAP 内网 RSSHub，需要改用能访问 QNAP 的 self-hosted runner，或提供受保护的公网 RSSHub 地址。
+
+生成完成后，工作流会把 Markdown 同步到 Obsidian 仓库 `ob_work_ver` 的 `0 日常笔记/Weekly/认知漫游/` 目录（文件名 `YYYY-MM-DD 认知漫游周报.md`），并在该仓库单独提交推送。本地预览/验证可手动执行：
+
+```bash
+python scripts/publish_to_vault.py --source output/weekly-2026-09-08.md \
+  --vault-dir /path/to/ob_work_ver --target-dir "0 日常笔记/Weekly/认知漫游"
+```
 
 ### 配置微信公众号
 

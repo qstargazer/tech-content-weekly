@@ -38,6 +38,7 @@ jobs:
       RSSHUB_ACCESS_KEY: ${{ secrets.RSSHUB_ACCESS_KEY }}
       OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
       DEEPSEEK_MODEL: ${{ vars.DEEPSEEK_MODEL }}
+      GITEE_VAULT_SSH_KEY: ${{ secrets.GITEE_VAULT_SSH_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -71,6 +72,30 @@ jobs:
           else
             git commit -m "chore: update weekly report, keep latest 3 weeks"
             git push
+          fi
+      - name: Publish Markdown to Obsidian Vault on Gitee
+        if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && env.GITEE_VAULT_SSH_KEY != '' }}
+        env:
+          GITEE_VAULT_REPO: git@gitee.com:sixtrees/ob_work_ver.git
+          GITEE_VAULT_BRANCH: master
+          VAULT_TARGET_DIR: 0 日常笔记/Weekly/认知漫游
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$GITEE_VAULT_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H gitee.com >> ~/.ssh/known_hosts
+          git clone --depth 1 --branch "$GITEE_VAULT_BRANCH" "$GITEE_VAULT_REPO" vault
+          report_date=$(TZ=Asia/Shanghai date +%F)
+          python scripts/publish_to_vault.py --source "output/weekly-${report_date}.md" --vault-dir vault --target-dir "$VAULT_TARGET_DIR"
+          cd vault
+          git config user.name "认知漫游周报"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "$VAULT_TARGET_DIR"
+          if git diff --cached --quiet; then
+            echo "Vault already contains this weekly report."
+          else
+            git commit -m "docs: add 认知漫游周报"
+            git push origin "$GITEE_VAULT_BRANCH"
           fi
       - uses: actions/upload-artifact@v4
         with:

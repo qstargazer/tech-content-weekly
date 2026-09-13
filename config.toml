@@ -58,6 +58,14 @@ enabled = true
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/517221395?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
+name = "极客湾Geekerwan"
+platform = "bilibili"
+id = "25876945"
+url = "https://space.bilibili.com/25876945"
+enabled = true
+feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/25876945?key=$RSSHUB_ACCESS_KEY"
+
+[[creators]]
 name = "MUSI的运动日记 · 骑行路线"
 platform = "bilibili"
 id = "11648134"
