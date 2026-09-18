@@ -95,7 +95,18 @@ jobs:
             echo "Vault already contains this weekly report."
           else
             git commit -m "docs: add 认知漫游周报"
-            git push origin "$GITEE_VAULT_BRANCH"
+            # Vault 可能在 clone 与 push 之间被其他设备（Obsidian 同步）更新，
+            # 先 rebase 再推送，重试数次以消化并发写入。
+            for attempt in 1 2 3; do
+              if git pull --rebase -X theirs origin "$GITEE_VAULT_BRANCH" && git push origin HEAD:"$GITEE_VAULT_BRANCH"; then
+                echo "Vault push succeeded on attempt $attempt."
+                exit 0
+              fi
+              echo "Vault push attempt $attempt failed, retrying..."
+              git rebase --abort 2>/dev/null || true
+              sleep $((attempt * 5))
+            done
+            exit 1
           fi
       - uses: actions/upload-artifact@v4
         with:
