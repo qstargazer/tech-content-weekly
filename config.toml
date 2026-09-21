@@ -228,6 +228,22 @@ url = "https://www.xiaoyuzhoufm.com/podcast/6388760f22567e8ea6ad070f"
 feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/6388760f22567e8ea6ad070f?key=$RSSHUB_ACCESS_KEY"
 enabled = true
 
+[[creators]]
+name = "千金要方"
+platform = "podcast"
+id = "xiaoyuzhou-673da52d8f3d33de4272b3d8"
+url = "https://www.xiaoyuzhoufm.com/podcast/673da52d8f3d33de4272b3d8"
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/673da52d8f3d33de4272b3d8?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+
+[[creators]]
+name = "小天章"
+platform = "podcast"
+id = "xiaoyuzhou-689a1c1616cbfc56f6893235"
+url = "https://www.xiaoyuzhoufm.com/podcast/689a1c1616cbfc56f6893235"
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/689a1c1616cbfc56f6893235?key=$RSSHUB_ACCESS_KEY"
+enabled = true
+
 # 豆瓣读书：新书速递随平台更新，通过自建 RSSHub 拉取。
 [[creators]]
 name = "豆瓣新书速递 · 科学新知"
