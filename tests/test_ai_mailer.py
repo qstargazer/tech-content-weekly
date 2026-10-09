@@ -62,6 +62,49 @@ class AiAndMailerTest(unittest.TestCase):
         self.assertEqual([rec.category for rec in recs], ["commute", "deep"])
         self.assertEqual(top.item.title, "数学可视化")
 
+    def test_parse_recommendations_by_id_resists_ordering(self):
+        """id 配对：即使模型输出的行顺序与数据顺序不同，理由也不会错位。"""
+        from tech_content_weekly.models import ContentItem
+        from datetime import datetime, timezone
+        items = [
+            ContentItem("a", "podcast", "#755 深度技术访谈", "https://episode-755", datetime(2026, 10, 7, tzinfo=timezone.utc)),
+            ContentItem("b", "bilibili", "广播体操视频", "https://video-1", datetime(2026, 10, 7, tzinfo=timezone.utc)),
+            ContentItem("c", "bilibili", "城市漫步 4K", "https://video-2", datetime(2026, 10, 7, tzinfo=timezone.utc)),
+        ]
+        id_755, id_gym, id_walk = (item.stable_id() for item in items)
+        # 行序故意打乱：广播体操的理由排在 #755 之前
+        text = (
+            '{"recommendations": ['
+            f'{{"id": "{id_gym}", "category": "commute", "reason": "广播体操视频，轻松怀旧"}},'
+            f'{{"id": "{id_walk}", "category": "commute", "reason": "城市漫步4K视频，纯视觉欣赏"}},'
+            f'{{"id": "{id_755}", "category": "deep", "reason": "如何把 PR 上到生产环境"}}'
+            '], "top_pick": {"id": "%s", "reason": "最值得"}}' % id_755
+        )
+        recs, top = parse_recommendations(text, items)
+        self.assertEqual(recs[0].item.title, "广播体操视频")
+        self.assertEqual(recs[0].reason, "广播体操视频，轻松怀旧")
+        self.assertEqual(recs[1].item.title, "城市漫步 4K")
+        self.assertEqual(recs[2].item.title, "#755 深度技术访谈")
+        self.assertEqual(top.item.title, "#755 深度技术访谈")
+
+    def test_parse_recommendations_skips_unknown_id(self):
+        """模型编造 id 时跳过该行，而不是错位到其他条目。"""
+        from tech_content_weekly.models import ContentItem
+        from datetime import datetime, timezone
+        items = [
+            ContentItem("a", "podcast", "轻松聊天", "https://1", datetime(2026, 8, 12, tzinfo=timezone.utc)),
+        ]
+        text = (
+            '{"recommendations": ['
+            '{"id": "deadbeef", "category": "commute", "reason": "编造的"},'
+            f'{{"id": "{items[0].stable_id()}", "category": "commute", "reason": "正确"}}'
+            '], "top_pick": {"id": "deadbeef", "reason": "x"}}'
+        )
+        recs, top = parse_recommendations(text, items)
+        self.assertEqual(len(recs), 1)
+        self.assertEqual(recs[0].reason, "正确")
+        self.assertIsNone(top)
+
     @patch.dict(os.environ, {"DEEPSEEK_API_KEY": "deep-key"}, clear=True)
     @patch("tech_content_weekly.ai._deepseek", return_value='{"recommendations": [{"index": 0, "category": "commute", "reason": "轻松"}], "top_pick": {"index": 0, "reason": "值得"}}')
     def test_recommendations_uses_ai_when_available(self, deepseek):

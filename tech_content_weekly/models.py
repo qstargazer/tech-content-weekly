@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -32,8 +33,13 @@ class ContentItem:
             return None
         return (self.comment_count or 0) / self.view_count
 
+    def stable_id(self) -> str:
+        """稳定短 id（URL 哈希），供 LLM 引用条目时使用，避免位置索引错位。"""
+        return hashlib.md5(self.url.encode("utf-8")).hexdigest()[:8]
+
     def as_json(self) -> dict[str, object]:
         return {
+            "id": self.stable_id(),
             "creator_name": self.creator_name, "platform": self.platform,
             "title": self.title, "url": self.url,
             "published": self.published.isoformat(),

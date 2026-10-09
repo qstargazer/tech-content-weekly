@@ -48,14 +48,14 @@ def build_prompt(items: list[ContentItem]) -> str:
 
 def build_recommendation_prompt(items: list[ContentItem]) -> str:
     evidence = [item.as_json() for item in items]
-    return """你是中文科技内容编辑。下面是本周内容的结构化条目。
+    return """你是中文科技内容编辑。下面是本周内容的结构化条目，每条自带唯一的 id 字段。
 请把每条内容按「适合的消费场景」分成两类：
 - "commute"：适合通勤、排队等碎片时间听/看，内容轻松、信息密度低、不需要做笔记，通常是播客或轻松的访谈。
 - "deep"：内容较深、信息密度高、需要专门时间坐下来认真研究，可能需要看屏幕、暂停思考或做笔记，通常是数学/系统/论文讲解或深度技术访谈。
 再从中选出一个你本周最推荐投入时间的内容作为 top_pick。
 只输出 JSON，不要输出其他文字，格式：
-{"recommendations": [{"index": 0, "category": "commute", "reason": "简短中文理由"}, ...], "top_pick": {"index": 3, "reason": "简短中文理由"}}
-index 对应数据列表顺序（从 0 开始）。
+{"recommendations": [{"id": "<条目 id>", "category": "commute", "reason": "简短中文理由"}, ...], "top_pick": {"id": "<条目 id>", "reason": "简短中文理由"}}
+必须用数据中每条自带的 id 字段来标识条目，禁止使用顺序编号；只引用数据里存在的 id。
 数据：
 """ + json.dumps(evidence, ensure_ascii=False, indent=2)
 
@@ -77,23 +77,37 @@ def parse_recommendations(text: str, items: list[ContentItem]) -> tuple[list[Rec
     data = _extract_json(text)
     if not data:
         return [], None
+    by_id = {item.stable_id(): item for item in items}
+
+    def resolve(row: object) -> ContentItem | None:
+        if not isinstance(row, dict):
+            return None
+        key = str(row.get("id") or "").strip()
+        if key and key in by_id:
+            return by_id[key]
+        # 兼容旧的 index 格式（仅当 id 缺失或无法识别时）
+        index = row.get("index")
+        if isinstance(index, int) and 0 <= index < len(items):
+            return items[index]
+        return None
+
     recommendations = []
     for row in data.get("recommendations", []):
-        index = row.get("index")
-        if not isinstance(index, int) or not (0 <= index < len(items)):
+        item = resolve(row)
+        if item is None:
             continue
         category = row.get("category")
         if category not in RECOMMENDATION_CATEGORIES:
             continue
         recommendations.append(
-            Recommendation(items[index], category, str(row.get("reason", "")).strip())
+            Recommendation(item, category, str(row.get("reason", "")).strip())
         )
     top = None
     pick = data.get("top_pick") or {}
-    index = pick.get("index")
-    if isinstance(index, int) and 0 <= index < len(items):
+    pick_item = resolve(pick)
+    if pick_item is not None:
         top = Recommendation(
-            items[index], "top",
+            pick_item, "top",
             str(pick.get("reason", "")).strip() or "本周最值得投入时间的内容",
         )
     return recommendations, top
