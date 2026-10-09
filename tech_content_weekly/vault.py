@@ -21,7 +21,9 @@ def publish_markdown_to_vault(source: Path, vault_dir: Path, target_dir: Path = 
         raise ValueError(f"Weekly report Markdown was not found: {source}")
     if not vault_dir.is_dir():
         raise ValueError(f"Vault work tree was not found: {vault_dir}")
-    if target_dir.is_absolute() or ".." in target_dir.parts:
+    # Windows 下 Path("/x") 是「无盘符但有根」的路径，is_absolute() 为 False，
+    # 但拼接时会丢弃 vault 前缀；因此 drive / root 任一存在都视为非法。
+    if target_dir.is_absolute() or target_dir.drive or target_dir.root or ".." in target_dir.parts:
         raise ValueError("Vault target directory must be a relative path inside the Vault")
 
     destination_dir = vault_dir / target_dir
