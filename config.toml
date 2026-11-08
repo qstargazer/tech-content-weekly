@@ -141,6 +141,13 @@ url = "https://www.youtube.com/@flipradio_fearnation"
 enabled = true
 
 [[creators]]
+name = "柴静 Chai Jing"
+platform = "youtube"
+id = "UCjuNibFJ21MiSNpu8LZyV4w"
+url = "https://www.youtube.com/@chaijing2023"
+enabled = true
+
+[[creators]]
 name = "自习室 STUDY ROOM"
 platform = "podcast"
 id = "xiaoyuzhou-65a5fb7540d4ef949c0140ac"

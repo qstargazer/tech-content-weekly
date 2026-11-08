@@ -43,6 +43,7 @@ class ReportTest(unittest.TestCase):
                 "UCzOblez4o3mZEkpOeFZdHWQ": "youtube",
                 "UCwHUYtwH5E41O6MiYoC19ng": "youtube",
                 "UCLKsaKMS_5RQuM0wHLp2vVg": "youtube",
+                "UCjuNibFJ21MiSNpu8LZyV4w": "youtube",
             },
         )
         bilibili = next(c for c in self.config.creators if c.id == "88461692")
