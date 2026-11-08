@@ -41,6 +41,7 @@ def build_prompt(items: list[ContentItem]) -> str:
     evidence = [item.as_json() for item in items]
     return """你是严谨的中文科技内容编辑。只根据下面的结构化条目撰写 250-500 字的“本周内容导读”。
 要求：按主题聚类，指出优先观看/收听的 3 项并说明理由；不得虚构视频或播客内容；缺少播放数据时不得推断热度。输出 Markdown，只用 ###、-、** 和行内代码。
+条目中的 `id` 字段仅供内部标识，正文里禁止出现 id 或任何十六进制哈希字符串；引用条目时一律使用「来源名 + 标题」。
 
 数据：
 """ + json.dumps(evidence, ensure_ascii=False, indent=2)
