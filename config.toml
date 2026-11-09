@@ -31,6 +31,7 @@ platform = "bilibili"
 id = "163682133"
 url = "https://space.bilibili.com/163682133"
 enabled = true
+topic = "科技"
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/163682133?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
@@ -39,6 +40,7 @@ platform = "bilibili"
 id = "280780745"
 url = "https://space.bilibili.com/280780745"
 enabled = true
+topic = "商业财经"
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/280780745?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
@@ -47,6 +49,7 @@ platform = "bilibili"
 id = "88461692"
 url = "https://space.bilibili.com/88461692"
 enabled = true
+topic = "科技"
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/88461692?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
@@ -55,6 +58,7 @@ platform = "bilibili"
 id = "517221395"
 url = "https://space.bilibili.com/517221395"
 enabled = true
+topic = "科技"
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/517221395?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
@@ -63,6 +67,7 @@ platform = "bilibili"
 id = "25876945"
 url = "https://space.bilibili.com/25876945"
 enabled = true
+topic = "科技"
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/25876945?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
@@ -71,6 +76,7 @@ platform = "bilibili"
 id = "11648134"
 url = "https://space.bilibili.com/11648134"
 enabled = true
+topic = "运动户外"
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/11648134?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
@@ -79,6 +85,7 @@ platform = "bilibili"
 id = "349169140"
 url = "https://space.bilibili.com/349169140"
 enabled = true
+topic = "运动户外"
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/349169140?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
@@ -87,6 +94,7 @@ platform = "bilibili"
 id = "3691003189922747"
 url = "https://space.bilibili.com/3691003189922747"
 enabled = true
+topic = "科技"
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/3691003189922747?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
@@ -95,6 +103,7 @@ platform = "bilibili"
 id = "171480802"
 url = "https://space.bilibili.com/171480802"
 enabled = true
+topic = "人文历史"
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/171480802?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
@@ -103,6 +112,7 @@ platform = "bilibili"
 id = "268831110"
 url = "https://space.bilibili.com/268831110"
 enabled = true
+topic = "人文历史"
 feed_url = "$RSSHUB_BASE_URL/bilibili/user/video/268831110?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
@@ -111,6 +121,7 @@ platform = "youtube"
 id = "UCYO_jab_esuFRV4b17AJtAw"
 url = "https://www.youtube.com/@3blue1brown"
 enabled = true
+topic = "科技"
 
 [[creators]]
 name = "小岛浪吹"
@@ -118,6 +129,7 @@ platform = "youtube"
 id = "UCYPT3wl0MgbOz63ho166KOw"
 url = "https://www.youtube.com/@xiaodaodalang"
 enabled = true
+topic = "人文历史"
 
 [[creators]]
 name = "初日医学 - 宋晏仁医师 x Cofit"
@@ -125,6 +137,7 @@ platform = "youtube"
 id = "UCzOblez4o3mZEkpOeFZdHWQ"
 url = "https://www.youtube.com/@cofit211"
 enabled = true
+topic = "健康养生"
 
 [[creators]]
 name = "和之梦 - 官方频道"
@@ -132,6 +145,7 @@ platform = "youtube"
 id = "UCwHUYtwH5E41O6MiYoC19ng"
 url = "https://www.youtube.com/channel/UCwHUYtwH5E41O6MiYoC19ng"
 enabled = true
+topic = "人文历史"
 
 [[creators]]
 name = "FearNation 世界苦茶"
@@ -139,6 +153,7 @@ platform = "youtube"
 id = "UCLKsaKMS_5RQuM0wHLp2vVg"
 url = "https://www.youtube.com/@flipradio_fearnation"
 enabled = true
+topic = "商业财经"
 
 [[creators]]
 name = "柴静 Chai Jing"
@@ -146,6 +161,15 @@ platform = "youtube"
 id = "UCjuNibFJ21MiSNpu8LZyV4w"
 url = "https://www.youtube.com/@chaijing2023"
 enabled = true
+topic = "人文历史"
+
+[[creators]]
+name = "Sherry's Notes 雪力的心理學筆記"
+platform = "youtube"
+id = "UCk92SZjdTkLo6uNj-MRJxWA"
+url = "https://www.youtube.com/@sherrysnotesofficial"
+enabled = true
+topic = "心理成长"
 
 [[creators]]
 name = "自习室 STUDY ROOM"
@@ -154,6 +178,7 @@ id = "xiaoyuzhou-65a5fb7540d4ef949c0140ac"
 url = "https://www.xiaoyuzhoufm.com/podcast/65a5fb7540d4ef949c0140ac"
 feed_url = "https://www.ximalaya.com/album/80074602.xml"
 enabled = true
+topic = "心理成长"
 
 [[creators]]
 name = "沈奕斐的播客"
@@ -162,6 +187,7 @@ id = "xiaoyuzhou-5f4e170c9504bbdb77566a19"
 url = "https://www.xiaoyuzhoufm.com/podcast/5f4e170c9504bbdb77566a19"
 feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/5f4e170c9504bbdb77566a19?key=$RSSHUB_ACCESS_KEY"
 enabled = true
+topic = "心理成长"
 
 [[creators]]
 name = "知行小酒馆"
@@ -170,6 +196,7 @@ id = "xiaoyuzhou-6013f9f58e2f7ee375cf4216"
 url = "https://www.xiaoyuzhoufm.com/podcast/6013f9f58e2f7ee375cf4216"
 feed_url = "https://feed.xyzfm.space/j8yp8gxkmgqr"
 enabled = true
+topic = "商业财经"
 
 [[creators]]
 name = "这病说来话长"
@@ -178,6 +205,7 @@ id = "xiaoyuzhou-63995a333a2b7eba5ceb4658"
 url = "https://www.xiaoyuzhoufm.com/podcast/63995a333a2b7eba5ceb4658"
 feed_url = "https://feed.xyzfm.space/xgeuu9mx3jag"
 enabled = true
+topic = "健康养生"
 
 [[creators]]
 name = "跨国串门儿计划"
@@ -193,6 +221,7 @@ platform = "podcast"
 id = "huberman-lab"
 url = "https://www.xiaoyuzhoufm.com/podcast/60687c31879a138f3f870350"
 enabled = true
+topic = "健康养生"
 feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/60687c31879a138f3f870350?key=$RSSHUB_ACCESS_KEY"
 
 [[creators]]
@@ -202,6 +231,7 @@ id = "xiaoyuzhou-626b46ea9cbbf0451cf5a962"
 url = "https://www.xiaoyuzhoufm.com/podcast/626b46ea9cbbf0451cf5a962"
 feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/626b46ea9cbbf0451cf5a962?key=$RSSHUB_ACCESS_KEY"
 enabled = true
+topic = "商业财经"
 
 [[creators]]
 name = "津津乐道"
@@ -210,6 +240,7 @@ id = "xiaoyuzhou-5e285480418a84a046275bf2"
 url = "https://www.xiaoyuzhoufm.com/podcast/5e285480418a84a046275bf2"
 feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/5e285480418a84a046275bf2?key=$RSSHUB_ACCESS_KEY"
 enabled = true
+topic = "科技"
 
 [[creators]]
 name = "天才捕手FM"
@@ -218,6 +249,7 @@ id = "xiaoyuzhou-5e77133b418a84a0469fc305"
 url = "https://www.xiaoyuzhoufm.com/podcast/5e77133b418a84a0469fc305"
 feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/5e77133b418a84a0469fc305?key=$RSSHUB_ACCESS_KEY"
 enabled = true
+topic = "人文历史"
 
 [[creators]]
 name = "无人知晓"
@@ -226,6 +258,7 @@ id = "xiaoyuzhou-611719d3cb0b82e1df0ad29e"
 url = "https://www.xiaoyuzhoufm.com/podcast/611719d3cb0b82e1df0ad29e"
 feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/611719d3cb0b82e1df0ad29e?key=$RSSHUB_ACCESS_KEY"
 enabled = true
+topic = "商业财经"
 
 [[creators]]
 name = "面基"
@@ -234,6 +267,7 @@ id = "xiaoyuzhou-6388760f22567e8ea6ad070f"
 url = "https://www.xiaoyuzhoufm.com/podcast/6388760f22567e8ea6ad070f"
 feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/6388760f22567e8ea6ad070f?key=$RSSHUB_ACCESS_KEY"
 enabled = true
+topic = "商业财经"
 
 [[creators]]
 name = "千金要方"
@@ -242,6 +276,7 @@ id = "xiaoyuzhou-673da52d8f3d33de4272b3d8"
 url = "https://www.xiaoyuzhoufm.com/podcast/673da52d8f3d33de4272b3d8"
 feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/673da52d8f3d33de4272b3d8?key=$RSSHUB_ACCESS_KEY"
 enabled = true
+topic = "健康养生"
 
 [[creators]]
 name = "小天章"

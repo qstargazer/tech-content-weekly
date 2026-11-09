@@ -44,6 +44,7 @@ class ReportTest(unittest.TestCase):
                 "UCwHUYtwH5E41O6MiYoC19ng": "youtube",
                 "UCLKsaKMS_5RQuM0wHLp2vVg": "youtube",
                 "UCjuNibFJ21MiSNpu8LZyV4w": "youtube",
+                "UCk92SZjdTkLo6uNj-MRJxWA": "youtube",
             },
         )
         bilibili = next(c for c in self.config.creators if c.id == "88461692")
@@ -63,7 +64,7 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(hezhimeng.url, "https://www.youtube.com/channel/UCwHUYtwH5E41O6MiYoC19ng")
     def test_weekly_filter_and_monthly_top(self):
         weekly = weekly_items(self.items, self.now, 7)
-        self.assertEqual(len(weekly), 8)
+        self.assertEqual(len(weekly), 11)
         self.assertTrue(any(item.platform == "douban" for item in weekly))
         top = monthly_top(self.items, self.now, 30, 3)
         self.assertEqual(len(top["opus精译"]), 3)
@@ -209,6 +210,20 @@ class ReportTest(unittest.TestCase):
         self.assertIn("### 通勤 / 碎片时间", result)
         self.assertIn("适合通勤。", result)
         self.assertIn("场景分类由 OpenAI 模型 `gpt-5-mini` 生成", result)
+
+    def test_html_renders_topic_sections(self):
+        result = render_html(
+            self.config.report.title, self.config.creators, self.items, self.now,
+        )
+        self.assertIn("主题专题", result)
+        self.assertIn("健康养生", result)
+        self.assertIn("科技", result)
+        self.assertIn('id="topic-', result)
+        markdown = render_markdown(
+            self.config.report.title, self.config.creators, self.items, self.now,
+        )
+        self.assertIn("## 主题专题", markdown)
+        self.assertIn("### 健康养生", markdown)
 
 
 if __name__ == "__main__":

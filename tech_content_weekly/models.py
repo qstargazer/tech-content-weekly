@@ -13,6 +13,7 @@ class Creator:
     url: str
     enabled: bool = True
     feed_url: str | None = None
+    topic: str = ""
 
 
 @dataclass(frozen=True)

@@ -38,4 +38,7 @@ def build_sample_items(now: datetime) -> list[ContentItem]:
         item("豆瓣新书速递 · 科学新知", "douban", "置身事内：中国政府与经济发展", "https://book.douban.com/subject/35546622/", 1, None, None, None, "置身事内/兰小欢/上海人民出版社/2021-8/9.1分"),
         item("豆瓣新书速递 · 科学新知", "douban", "也许你该找个人聊聊", "https://book.douban.com/subject/35481512/", 2, None, None, None, "也许你该找个人聊聊/[美]洛莉·戈特利布/上海文化出版社/2021-7-28/9.0分"),
         item("豆瓣新书速递 · 科学新知", "douban", "芯片战争：世界最关键技术的争夺战", "https://book.douban.com/subject/36067023/", 3, None, None, None, "芯片战争/[美]克里斯·米勒/浙江人民出版社/2023-1/8.9分"),
+        item("千金要方", "podcast", "秋夜宜收：一夜好眠，是身体最重要的一次修复", "https://www.xiaoyuzhoufm.com/episode/sample-health-01", 1, 2880, None, None, "中医养生，谈秋季睡眠与五脏失衡。"),
+        item("初日医学 - 宋晏仁医师 x Cofit", "youtube", "少吃、斷食、天天運動，為什麼還是瘦不下來？", "https://www.youtube.com/watch?v=sample-health-02", 2, 1805, 61_000, 39, "减重与代谢健康讲解。"),
+        item("极客湾Geekerwan", "bilibili", "全新 MacBook Pro 评测：轻薄/散热/续航升级", "https://www.bilibili.com/video/BVsample-geek", 3, 900, None, None, "消费电子硬件评测。"),
     ]
