@@ -84,7 +84,22 @@ jobs:
           printf '%s\n' "$GITEE_VAULT_SSH_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H gitee.com >> ~/.ssh/known_hosts
-          git clone --depth 1 --branch "$GITEE_VAULT_BRANCH" "$GITEE_VAULT_REPO" vault
+          # Gitee 对 GitHub 海外 runner 的连接常被重置（Connection reset /
+          # early EOF），clone 必须重试；多次失败时降级为警告，不阻塞周报。
+          clone_ok=0
+          for attempt in 1 2 3 4 5; do
+            if git clone --depth 1 --branch "$GITEE_VAULT_BRANCH" "$GITEE_VAULT_REPO" vault; then
+              clone_ok=1
+              break
+            fi
+            echo "Vault clone attempt $attempt failed, retrying..."
+            rm -rf vault
+            sleep $((attempt * 10))
+          done
+          if [ "$clone_ok" -ne 1 ]; then
+            echo "::warning::Gitee vault clone failed after 5 attempts; skipping vault publish this run."
+            exit 0
+          fi
           report_date=$(TZ=Asia/Shanghai date +%F)
           python scripts/publish_to_vault.py --source "output/weekly-${report_date}.md" --vault-dir vault --target-dir "$VAULT_TARGET_DIR"
           cd vault
@@ -97,16 +112,21 @@ jobs:
             git commit -m "docs: add 认知漫游周报"
             # Vault 可能在 clone 与 push 之间被其他设备（Obsidian 同步）更新，
             # 先 rebase 再推送，重试数次以消化并发写入。
-            for attempt in 1 2 3; do
+            push_ok=0
+            for attempt in 1 2 3 4 5; do
               if git pull --rebase -X theirs origin "$GITEE_VAULT_BRANCH" && git push origin HEAD:"$GITEE_VAULT_BRANCH"; then
                 echo "Vault push succeeded on attempt $attempt."
-                exit 0
+                push_ok=1
+                break
               fi
               echo "Vault push attempt $attempt failed, retrying..."
               git rebase --abort 2>/dev/null || true
-              sleep $((attempt * 5))
+              sleep $((attempt * 10))
             done
-            exit 1
+            if [ "$push_ok" -ne 1 ]; then
+              echo "::warning::Gitee vault push failed after 5 attempts; skipping vault publish this run."
+              exit 0
+            fi
           fi
       - uses: actions/upload-artifact@v4
         with:
