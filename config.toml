@@ -194,7 +194,7 @@ name = "知行小酒馆"
 platform = "podcast"
 id = "xiaoyuzhou-6013f9f58e2f7ee375cf4216"
 url = "https://www.xiaoyuzhoufm.com/podcast/6013f9f58e2f7ee375cf4216"
-feed_url = "https://feed.xyzfm.space/j8yp8gxkmgqr"
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/6013f9f58e2f7ee375cf4216?key=$RSSHUB_ACCESS_KEY"
 enabled = true
 topic = "商业财经"
 
@@ -203,7 +203,7 @@ name = "这病说来话长"
 platform = "podcast"
 id = "xiaoyuzhou-63995a333a2b7eba5ceb4658"
 url = "https://www.xiaoyuzhoufm.com/podcast/63995a333a2b7eba5ceb4658"
-feed_url = "https://feed.xyzfm.space/xgeuu9mx3jag"
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/63995a333a2b7eba5ceb4658?key=$RSSHUB_ACCESS_KEY"
 enabled = true
 topic = "健康养生"
 
@@ -212,7 +212,7 @@ name = "跨国串门儿计划"
 platform = "podcast"
 id = "xiaoyuzhou-670f3da40d2f24f28978736f"
 url = "https://www.xiaoyuzhoufm.com/podcast/670f3da40d2f24f28978736f"
-feed_url = "https://feed.xyzfm.space/r8t44lmvu99m"
+feed_url = "$RSSHUB_BASE_URL/xiaoyuzhou/podcast/670f3da40d2f24f28978736f?key=$RSSHUB_ACCESS_KEY"
 enabled = true
 
 [[creators]]
